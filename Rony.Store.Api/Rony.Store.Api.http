@@ -1,0 +1,6 @@
+@Rony.Store.Api_HostAddress = http://localhost:5047
+
+GET {{Rony.Store.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
