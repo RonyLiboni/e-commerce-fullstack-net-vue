@@ -1,7 +1,7 @@
 ﻿using Rony.Store.Domain.Entities.BaseCommons;
 using System.Text.Json.Serialization;
 
-namespace Rony.Store.Domain.Entities.DepartmentHierarchy;
+namespace Rony.Store.Domain.Entities.Departments;
 public class SubDepartment : BaseEntityWithName
 {
     [JsonIgnore]
