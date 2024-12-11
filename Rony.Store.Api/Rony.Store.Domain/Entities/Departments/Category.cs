@@ -1,4 +1,4 @@
-﻿using Rony.Store.Domain.Entities.BaseCommons;
+﻿using Rony.Store.Domain.Entities.BaseEntities;
 using System.Text.Json.Serialization;
 
 namespace Rony.Store.Domain.Entities.Departments;

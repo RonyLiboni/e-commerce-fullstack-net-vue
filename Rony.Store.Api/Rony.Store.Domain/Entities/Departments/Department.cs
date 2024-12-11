@@ -1,7 +1,7 @@
-﻿using Rony.Store.Domain.Entities.BaseCommons;
+﻿using Rony.Store.Domain.Entities.BaseEntities;
 
 namespace Rony.Store.Domain.Entities.Departments;
 public class Department : BaseEntityWithName
 {
-    public IEnumerable<SubDepartment> SubDepartments { get; set; } = [];
+    public List<SubDepartment> SubDepartments { get; set; }
 }

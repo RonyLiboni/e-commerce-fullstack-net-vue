@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Rony.Store.Domain.Entities.BaseCommons;
+namespace Rony.Store.Domain.Entities.BaseEntities;
 
 public abstract class BaseEntity
 {
     [Key]
     public int Id { get; set; }
 
-    public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.Now;
+    public DateTime CreatedDate { get; set; } = DateTime.Now;
 
 }

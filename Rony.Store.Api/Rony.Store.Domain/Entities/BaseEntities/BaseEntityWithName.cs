@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Rony.Store.Domain.Entities.BaseCommons;
+namespace Rony.Store.Domain.Entities.BaseEntities;
 
 public abstract class BaseEntityWithName : BaseEntity
 {
