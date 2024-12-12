@@ -4,9 +4,9 @@ using Rony.Store.Domain.Contracts.Services.Infrastructure.Storage;
 namespace Rony.Store.Infrastructure.Storage;
 public class StorageService : IStorageService
 {
-    private readonly string TEMPORARY_FOLDER_PATH = Path.Combine(Directory.GetCurrentDirectory(), "TemporaryFiles").Replace("\\Rony.Store.Api\\Rony.Store.Api\\", "\\Rony.Store.Api\\Rony.Store.Infrastructure\\Storage\\");
-    private readonly string LONG_TERM_FOLDER_PATH = Path.Combine(Directory.GetCurrentDirectory(), "LongTermFiles");
-    
+    private readonly string TEMPORARY_FOLDER_PATH = BuildFolderPath("TemporaryFiles");
+    private readonly string LONG_TERM_FOLDER_PATH = BuildFolderPath("LongTermFiles");
+
     public async Task<string> UploadFileInTemporaryStorage(IFormFile file)
     {
         CreateFolderIfDoNotExist(TEMPORARY_FOLDER_PATH);
@@ -44,11 +44,22 @@ public class StorageService : IStorageService
         }
     }
 
-    private void CreateFolderIfDoNotExist(string folderPath)
+    private static void CreateFolderIfDoNotExist(string folderPath)
     {
         if (!Directory.Exists(folderPath))
         {
             Directory.CreateDirectory(folderPath);
         }
     }
+
+    public bool IsFileInLongTermStorage(string imagePath)
+    {
+        return imagePath.Contains("\\Rony.Store.Api\\Rony.Store.Infrastructure\\Storage\\LongTermFiles");
+    }
+
+    private static string BuildFolderPath(string folderName)
+    {
+        return Path.Combine(Directory.GetCurrentDirectory(), folderName).Replace("\\Rony.Store.Api\\Rony.Store.Api\\", "\\Rony.Store.Api\\Rony.Store.Infrastructure\\Storage\\");
+    }
+
 }

@@ -8,4 +8,6 @@ namespace Rony.Store.Domain.Contracts.Services.Products;
 public interface IProductService : IBaseService<Product, int>
 {
     Task<PagedResult<ProductDTO>> FindAsync(FindProductsParameters parameters);
+    Task CreateAsync(ProductFormDTO form);
+    Task UpdateByIdAsync(ProductFormDTO form, int id);
 }

@@ -17,9 +17,9 @@ public abstract class BaseService<Entity, Id> : IBaseService<Entity, Id> where E
         _mapper = mapper;
     }
 
-    public async Task CreateAsync<EntityForm>(EntityForm modelToCreate)
+    public virtual async Task CreateAsync<EntityForm>(EntityForm entityToCreate)
     {
-        await _repository.AddAsync(_mapper.Map<Entity>(modelToCreate));
+        await _repository.AddAsync(_mapper.Map<Entity>(entityToCreate));
         await _unitOfWork.SaveChangesAsync();
     }
 

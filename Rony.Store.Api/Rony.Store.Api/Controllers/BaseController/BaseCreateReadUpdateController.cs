@@ -14,14 +14,14 @@ public class BaseCreateReadUpdateController<Entity,Id,Form,DTO>(IBaseService<Ent
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] Form formDTO)
+    public virtual async Task<IActionResult> CreateAsync([FromBody] Form formDTO)
     {
         await baseService.CreateAsync(formDTO);
         return Created();
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateByIdAsync([FromRoute] Id id, [FromBody] Form formDTO)
+    public virtual async Task<IActionResult> UpdateByIdAsync([FromRoute] Id id, [FromBody] Form formDTO)
     {
         await baseService.UpdateByIdAsync(formDTO, id);
         return Ok("Entity successfully updated.");

@@ -16,4 +16,16 @@ public class ProductController(IProductService productService) : BaseCreateReadU
     {
         return Ok(await productService.FindAsync(parameters));
     }
+
+    public override async Task<IActionResult> CreateAsync([FromBody] ProductFormDTO formDTO)
+    {
+        await productService.CreateAsync(formDTO);
+        return Created();
+    }
+
+    public override async Task<IActionResult> UpdateByIdAsync([FromRoute] int id, [FromBody] ProductFormDTO formDTO)
+    {
+        await productService.UpdateByIdAsync(formDTO, id);
+        return Ok("Entity successfully updated.");
+    }
 }
