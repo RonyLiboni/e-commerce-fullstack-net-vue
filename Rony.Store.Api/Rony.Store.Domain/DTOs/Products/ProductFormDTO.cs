@@ -1,5 +1,7 @@
-﻿namespace Rony.Store.Domain.DTOs.Products;
-public class ProductFormDTO
+﻿using Rony.Store.Domain.DTOs.BaseDTO;
+
+namespace Rony.Store.Domain.DTOs.Products;
+public class ProductFormDTO : NameDTO
 {
     public string Sku { get; set; }
     public decimal Price { get; set; }

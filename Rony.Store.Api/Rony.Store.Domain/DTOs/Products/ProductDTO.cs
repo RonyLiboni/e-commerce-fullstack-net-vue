@@ -1,7 +1,8 @@
-﻿using Rony.Store.Domain.DTOs.Departments;
+﻿using Rony.Store.Domain.DTOs.BaseDTO;
+using Rony.Store.Domain.DTOs.Departments;
 
 namespace Rony.Store.Domain.DTOs.Products;
-public class ProductDTO
+public class ProductDTO : NameDTO
 {
     public string Sku { get; set; }
     public decimal Price { get; set; }
