@@ -4,6 +4,7 @@ using Rony.Store.Domain.Contracts.Repositories.Departments;
 using Rony.Store.Domain.Contracts.Repositories.Products;
 using Rony.Store.Domain.Contracts.Repositories.UnitOfWorks;
 using Rony.Store.Domain.Contracts.Services.Departments;
+using Rony.Store.Domain.Contracts.Services.Infrastructure.Storage;
 using Rony.Store.Domain.Contracts.Services.Products;
 using Rony.Store.Domain.Profiles;
 using Rony.Store.Domain.Services.Departments;
@@ -12,6 +13,7 @@ using Rony.Store.Infrastructure.Database;
 using Rony.Store.Infrastructure.Database.Repositories.Departments;
 using Rony.Store.Infrastructure.Database.Repositories.Products;
 using Rony.Store.Infrastructure.Database.Repositories.UnityOfWorks;
+using Rony.Store.Infrastructure.Storage;
 
 namespace Rony.Store.Api;
 
@@ -38,6 +40,8 @@ public static class DependencyInjection
         services.AddScoped<ICategoryService, CategoryService>();
 
         services.AddScoped<IProductService, ProductService>();
+
+        services.AddScoped<IStorageService, StorageService>();
 
         return services;
     }
