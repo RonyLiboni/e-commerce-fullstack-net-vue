@@ -18,7 +18,7 @@ public class DepartmentController(IDepartmentService departmentService) : Contro
     [HttpGet("{id}")]
     public async Task<IActionResult> FindByIdAsync([FromRoute] int id)
     {
-        return Ok(await departmentService.FindByIdAsync(id));
+        return Ok(await departmentService.FindDTOByIdAsync<DepartmentDTO>(id));
     }
 
     [HttpPost]

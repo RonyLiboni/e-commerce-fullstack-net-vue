@@ -12,7 +12,7 @@ public class SubDepartmentController(ISubDepartmentService subDepartmentService)
     [HttpGet("{id}")]
     public async Task<IActionResult> FindByIdAsync([FromRoute] int id)
     {
-        return Ok(await subDepartmentService.FindByIdAsync(id));
+        return Ok(await subDepartmentService.FindDTOByIdAsync<SubDepartmentDTO>(id));
     }
 
     [HttpPost]

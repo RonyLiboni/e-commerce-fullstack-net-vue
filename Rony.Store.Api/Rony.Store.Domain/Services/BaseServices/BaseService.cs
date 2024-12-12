@@ -23,10 +23,14 @@ public abstract class BaseService<Entity, Id> : IBaseService<Entity, Id> where E
         await _unitOfWork.SaveChangesAsync();
     }
 
-
     public async Task<Entity> FindByIdAsync(Id Id)
     {
         return await _repository.FindById(Id);
+    }
+
+    public async Task<EntityDTO> FindDTOByIdAsync<EntityDTO>(Id id)
+    {
+        return _mapper.Map<EntityDTO>(await FindByIdAsync(id));
     }
 
     public async Task UpdateByIdAsync<EntityForm>(EntityForm entityForm, Id id)

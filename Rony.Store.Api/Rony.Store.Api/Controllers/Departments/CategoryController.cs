@@ -12,7 +12,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [HttpGet("{id}")]
     public async Task<IActionResult> FindByIdAsync([FromRoute] int id)
     {
-        return Ok(await categoryService.FindByIdAsync(id));
+        return Ok(await categoryService.FindDTOByIdAsync<CategoryDTO>(id));
     }
 
     [HttpPost]
