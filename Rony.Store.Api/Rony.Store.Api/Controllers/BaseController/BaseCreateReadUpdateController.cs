@@ -24,6 +24,6 @@ public class BaseCreateReadUpdateController<Entity,Id,Form,DTO>(IBaseService<Ent
     public async Task<IActionResult> UpdateByIdAsync([FromRoute] Id id, [FromBody] Form formDTO)
     {
         await baseService.UpdateByIdAsync(formDTO, id);
-        return NoContent();
+        return Ok("Entity successfully updated.");
     }
 }
