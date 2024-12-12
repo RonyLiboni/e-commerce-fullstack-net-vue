@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rony.Store.Domain.Entities.Departments;
+using Rony.Store.Domain.Entities.Products;
 
 namespace Rony.Store.Infrastructure.Database;
 public class StoreContext(DbContextOptions<StoreContext> options) : DbContext(options)
@@ -75,6 +76,39 @@ public class StoreContext(DbContextOptions<StoreContext> options) : DbContext(op
                             .IsRequired()
                             .HasColumnType("datetime2")
                             .HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        modelBuilder.Entity<Product>(product =>
+        {
+            product.ToTable("Products");
+            product.Property(product => product.Id)
+                            .ValueGeneratedOnAdd()
+                            .IsRequired();
+            product.Property(product => product.Name)
+                          .HasMaxLength(150);
+            product.Property(product => product.Sku)
+                            .HasMaxLength(36)
+                            .IsRequired();
+            product.Property(product => product.Price)
+                          .HasPrecision(9, 2)
+                          .IsRequired();
+            product.Property(product => product.Description)
+                          .HasMaxLength(255);
+            product.Property(product => product.ImageKey)
+                          .HasMaxLength(100);
+            product.Property(product => product.ImagePath)
+                          .HasMaxLength(255);
+            product.Property(product => product.CreatedDate)
+                            .IsRequired()
+                            .HasColumnType("datetime2")
+                            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            product.HasKey(product => product.Id)
+                            .HasName("PK_Product");
+            product.HasOne(product => product.Category);
+            product.HasIndex(product => product.Name)
+                            .IsUnique();
+            product.HasIndex(product => product.Sku)
+                            .IsUnique();
         });
 
     }

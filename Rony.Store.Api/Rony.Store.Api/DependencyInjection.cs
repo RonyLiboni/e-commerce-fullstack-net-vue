@@ -1,12 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rony.Store.Api.Middleware;
 using Rony.Store.Domain.Contracts.Repositories.Departments;
+using Rony.Store.Domain.Contracts.Repositories.Products;
 using Rony.Store.Domain.Contracts.Repositories.UnitOfWorks;
 using Rony.Store.Domain.Contracts.Services.Departments;
+using Rony.Store.Domain.Contracts.Services.Products;
 using Rony.Store.Domain.Profiles;
 using Rony.Store.Domain.Services.Departments;
+using Rony.Store.Domain.Services.Products;
 using Rony.Store.Infrastructure.Database;
 using Rony.Store.Infrastructure.Database.Repositories.Departments;
+using Rony.Store.Infrastructure.Database.Repositories.Products;
 using Rony.Store.Infrastructure.Database.Repositories.UnityOfWorks;
 
 namespace Rony.Store.Api;
@@ -33,6 +37,8 @@ public static class DependencyInjection
 
         services.AddScoped<ICategoryService, CategoryService>();
 
+        services.AddScoped<IProductService, ProductService>();
+
         return services;
     }
 
@@ -43,6 +49,8 @@ public static class DependencyInjection
         services.AddScoped<ISubDepartmentRepository, SubDepartmentRepository>();
 
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+        services.AddScoped<IProductRepository, ProductRepository>();
 
         return services;
     }
