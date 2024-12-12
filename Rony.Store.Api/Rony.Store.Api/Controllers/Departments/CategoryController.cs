@@ -8,6 +8,12 @@ namespace Rony.Store.Api.Controllers.Departments;
 [Route("categories")]
 public class CategoryController(ICategoryService categoryService) : ControllerBase
 {
+    
+    [HttpGet]
+    public async Task<IActionResult> FindAllAsync()
+    {
+        return Ok(await categoryService.FindAllAsync());
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> FindByIdAsync([FromRoute] int id)
