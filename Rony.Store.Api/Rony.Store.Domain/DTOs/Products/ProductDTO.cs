@@ -4,6 +4,7 @@ using Rony.Store.Domain.DTOs.Departments;
 namespace Rony.Store.Domain.DTOs.Products;
 public class ProductDTO : NameDTO
 {
+    public int Id { get; set; }
     public string Sku { get; set; }
     public decimal Price { get; set; }
     public string Description { get; set; }
