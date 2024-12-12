@@ -43,6 +43,8 @@ public static class DependencyInjection
 
         services.AddScoped<IStorageService, StorageService>();
 
+        services.AddScoped<ICustomerSearchFilterService, CustomerSearchFilterService>();
+
         return services;
     }
 
