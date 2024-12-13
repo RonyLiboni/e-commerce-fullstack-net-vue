@@ -95,8 +95,6 @@ const updatePageNumber = (pageNumberSelected: number) => {
   parameters.pageNumber = pageNumberSelected;
 };
 
-const print = (msg: string) => console.log(msg + parameters.name);
-
 const editProduct = async (product: number) => {
   console.log(product);
 };
@@ -122,8 +120,8 @@ onMounted(fetchProducts);
 }
 
 .product-table thead th {
-  background-color: #6c757d;
-  color: white;
+  background-color: #0DCAF0;;
+  color: black;
   padding: 12px;
   text-align: left;
   font-weight: bold;
@@ -144,7 +142,7 @@ onMounted(fetchProducts);
 
 .edit-button {
   padding: 6px 12px;
-  background-color: #60aef1;
+  background-color: #0DCAF0;
   border: none;
   border-radius: 4px;
   cursor: pointer;
