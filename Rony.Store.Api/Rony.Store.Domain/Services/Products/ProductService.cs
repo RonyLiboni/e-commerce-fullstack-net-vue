@@ -20,29 +20,24 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
     public async Task CreateAsync(ProductFormDTO entity)
     {
-        var longTermImagePath = storageService.MoveFileToLongTermStorage(entity.ImagePath);
-        entity.ImagePath = longTermImagePath;
-        entity.ImageKey = Path.GetFileName(longTermImagePath);
-        
+        storageService.MoveFileToLongTermStorage(entity.ImageKey);
         await base.CreateAsync(entity);
     }
 
     public async Task UpdateByIdAsync(ProductFormDTO form, int id)
     {
         var entity = await FindByIdAsync(id);
-        var imagePathChanged = entity.ImagePath != form.ImagePath;
-        var oldImagePath = entity.ImagePath;
+        var imagePathChanged = entity.ImageKey != form.ImageKey;
+        var oldImageKey = entity.ImageKey;
 
-        if (!storageService.IsFileInLongTermStorage(form.ImagePath))
+        if (!storageService.IsFileInLongTermStorage(form.ImageKey))
         {
-            var longTermImagePath = storageService.MoveFileToLongTermStorage(form.ImagePath);
-            form.ImagePath = longTermImagePath;
-            form.ImageKey = Path.GetFileName(longTermImagePath);
+            storageService.MoveFileToLongTermStorage(form.ImageKey);
         }
 
         if (imagePathChanged)
         {
-            storageService.RemoveFile(oldImagePath);
+            storageService.RemoveFile(oldImageKey);
         }
 
         await productRepository.UpdateAsync(mapper.Map(form, entity));

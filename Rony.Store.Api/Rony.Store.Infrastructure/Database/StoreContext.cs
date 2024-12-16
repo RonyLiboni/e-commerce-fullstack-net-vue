@@ -95,9 +95,7 @@ public class StoreContext(DbContextOptions<StoreContext> options) : DbContext(op
             product.Property(product => product.Description)
                           .HasMaxLength(255);
             product.Property(product => product.ImageKey)
-                          .HasMaxLength(100);
-            product.Property(product => product.ImagePath)
-                          .HasMaxLength(255);
+                          .HasMaxLength(50);
             product.Property(product => product.CreatedDate)
                             .IsRequired()
                             .HasColumnType("datetime2")
