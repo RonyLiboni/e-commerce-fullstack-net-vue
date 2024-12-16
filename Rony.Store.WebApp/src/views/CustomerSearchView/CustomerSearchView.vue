@@ -13,6 +13,10 @@
           <option value="Price">Price</option>
           <option value="Name">Name</option>
         </select>
+        <select v-model="filters.orderByDescending" class="form-select">
+          <option value="false">Ascending</option>
+          <option value="true">Descending</option>
+        </select>
       </div>
 
       <div class="actions">
