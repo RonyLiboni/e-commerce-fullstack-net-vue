@@ -12,10 +12,11 @@ export interface Product {
   name: string;
 }
 
-export interface CustomerSearchFilter {
-  departments: string[];
-  subDepartments: string[];
-  categories: string[];
+export interface CustomerSearchFilter extends PageParameters{
+  name?: string,
+  startPrice?: number,
+  endPrice?: number,
+  sortField?: string
 }
 
 export interface ProductManagementFindProductsParameters extends PageParameters {

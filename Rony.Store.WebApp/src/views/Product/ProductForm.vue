@@ -29,6 +29,7 @@
           <label for="productPrice" class="form-label">Price</label>
           <input
             type="number"
+            step="0.01"
             class="form-control"
             id="productPrice"
             v-model="product.price"
