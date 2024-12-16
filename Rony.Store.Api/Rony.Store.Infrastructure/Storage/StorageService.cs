@@ -10,7 +10,7 @@ public class StorageService : IStorageService
     public async Task<string> UploadFileInTemporaryStorage(IFormFile file)
     {
         CreateFolderIfDoNotExist(TEMPORARY_FOLDER_PATH);
-        string fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+        string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
         string filePath = Path.Combine(TEMPORARY_FOLDER_PATH, fileName);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -18,7 +18,7 @@ public class StorageService : IStorageService
             await file.CopyToAsync(stream);
         }
 
-        return filePath;
+        return fileName;
     }
 
     public string MoveFileToLongTermStorage(string filePath)
@@ -62,4 +62,22 @@ public class StorageService : IStorageService
         return Path.Combine(Directory.GetCurrentDirectory(), folderName).Replace("\\Rony.Store.Api\\Rony.Store.Api\\", "\\Rony.Store.Api\\Rony.Store.Infrastructure\\Storage\\");
     }
 
+    public string GetByFileKeyAsync(string fileKey)
+    {
+        var filePath = Path.Combine(LONG_TERM_FOLDER_PATH, fileKey);
+
+        if (System.IO.File.Exists(filePath))
+        {
+            return filePath;
+        }
+
+        filePath = Path.Combine(TEMPORARY_FOLDER_PATH, fileKey);
+
+        if (System.IO.File.Exists(filePath))
+        {
+            return filePath;
+        }
+
+        return null;
+    }
 }

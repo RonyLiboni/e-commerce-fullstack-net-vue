@@ -7,4 +7,5 @@ public interface IStorageService
     string MoveFileToLongTermStorage(string filePath);
     void RemoveFile(string filePath);
     bool IsFileInLongTermStorage(string imagePath);
+    string GetByFileKeyAsync(string fileKey);
 }
