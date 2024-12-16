@@ -10,34 +10,38 @@ public class StorageService : IStorageService
     public async Task<string> UploadFileInTemporaryStorage(IFormFile file)
     {
         CreateFolderIfDoNotExist(TEMPORARY_FOLDER_PATH);
-        string fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
-        string filePath = Path.Combine(TEMPORARY_FOLDER_PATH, fileName);
+        string fileKey = Guid.NewGuid() + Path.GetExtension(file.FileName);
+        string filePath = Path.Combine(TEMPORARY_FOLDER_PATH, fileKey);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
 
-        return filePath;
+        return fileKey;
     }
 
-    public string MoveFileToLongTermStorage(string filePath)
+    public void MoveFileToLongTermStorage(string fileKey)
     {
-        CreateFolderIfDoNotExist(LONG_TERM_FOLDER_PATH);
-
-        if (!File.Exists(filePath))
+        if (File.Exists(Path.Combine(TEMPORARY_FOLDER_PATH, fileKey)))
         {
-            return string.Empty;
+            CreateFolderIfDoNotExist(LONG_TERM_FOLDER_PATH);
+            var longTermFilePath = Path.Combine(LONG_TERM_FOLDER_PATH, fileKey);
+            File.Move(Path.Combine(TEMPORARY_FOLDER_PATH, fileKey), longTermFilePath);
+        }
+    }
+
+    public void RemoveFile(string fileKey)
+    {
+        var filePath = Path.Combine(LONG_TERM_FOLDER_PATH, fileKey);
+
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
         }
 
-        var fileName = Path.GetFileName(filePath);
-        var longTermFilePath = Path.Combine(LONG_TERM_FOLDER_PATH, fileName);
-        File.Move(filePath, longTermFilePath);
-        return longTermFilePath;
-    }
+        filePath = Path.Combine(TEMPORARY_FOLDER_PATH, fileKey);
 
-    public void RemoveFile(string filePath)
-    {
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
@@ -52,9 +56,14 @@ public class StorageService : IStorageService
         }
     }
 
-    public bool IsFileInLongTermStorage(string imagePath)
+    public bool IsFileInLongTermStorage(string fileKey)
     {
-        return imagePath.Contains("\\Rony.Store.Api\\Rony.Store.Infrastructure\\Storage\\LongTermFiles");
+        if (File.Exists(Path.Combine(LONG_TERM_FOLDER_PATH, fileKey)))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private static string BuildFolderPath(string folderName)
@@ -62,4 +71,22 @@ public class StorageService : IStorageService
         return Path.Combine(Directory.GetCurrentDirectory(), folderName).Replace("\\Rony.Store.Api\\Rony.Store.Api\\", "\\Rony.Store.Api\\Rony.Store.Infrastructure\\Storage\\");
     }
 
+    public string GetByFileKeyAsync(string fileKey)
+    {
+        var filePath = Path.Combine(LONG_TERM_FOLDER_PATH, fileKey);
+
+        if (File.Exists(filePath))
+        {
+            return filePath;
+        }
+
+        filePath = Path.Combine(TEMPORARY_FOLDER_PATH, fileKey);
+
+        if (File.Exists(filePath))
+        {
+            return filePath;
+        }
+
+        return null;
+    }
 }

@@ -8,7 +8,6 @@ public class Product : BaseEntityWithName
     public decimal Price { get; set; }
     public string Description { get; set; }
     public string ImageKey { get; set; }
-    public string ImagePath { get; set; }
     public int CategoryId { get; set; }
     public Category Category { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Rony.Store.Domain.Contracts.Services.Infrastructure.Storage;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,6 +12,20 @@ public class StorageController(IStorageService storageService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> UploadImageToTemporaryStorage([Required] IFormFile file)
     {
-        return Ok(new { filePath = await storageService.UploadFileInTemporaryStorage(file) });
+        return Ok(new { fileKey = await storageService.UploadFileInTemporaryStorage(file) });
+    }
+
+    [HttpGet]
+    public IActionResult GetByFileKeyAsync([FromQuery] string fileKey)
+    {
+        var filePath = storageService.GetByFileKeyAsync(fileKey);
+
+        var provider = new FileExtensionContentTypeProvider();
+        if (!provider.TryGetContentType(filePath, out var contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+
+        return PhysicalFile(filePath, contentType);
     }
 }
