@@ -71,8 +71,8 @@
             accept="image/*"
           />
         </div>
-        <div class="image-preview-container" v-if="imageSrc">
-          <img :src="imageSrc"  alt="Product Image" class="image-preview" />
+        <div class="image-preview-container" v-if="product.imageKey">
+          <img :src="setImageSrc(product.imageKey)"  alt="Product Image" class="image-preview" />
         </div>
         <div class="buttons-actions">
           <button class="btn btn-danger w-100" @click="back">Return</button>
@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted, ref, watch } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import type { Category } from "../../types/DepartmentTypes";
@@ -93,7 +93,6 @@ const categories = reactive<Category[]>([]);
 const isEditMode = ref(false);
 const route = useRoute();
 const router = useRouter();
-const imageSrc = ref<string | null>(null);
 const product = reactive({
   id: 0,
   sku: '',
@@ -105,14 +104,6 @@ const product = reactive({
 });
 
 const back = () => router.push("/products-management");
-
-watch(
-  () => product.imageKey,
-  async (newKey) => {
-    await setImageSrc(newKey);
-  },
-  { immediate: true }
-);
 
 onMounted(async () => {
   try {
@@ -132,21 +123,7 @@ onMounted(async () => {
   }
 });
 
-const setImageSrc = async (imageKey: string) => {
-  if (imageKey) {
-      try {
-        const response = await axios.get(`https://localhost:7166/storage?fileKey=${imageKey}`, { responseType: 'blob' });
-        if(response.data){
-          imageSrc.value = URL.createObjectURL(response.data);
-        }
-      } catch (error) {
-        console.error(error);
-        imageSrc.value = null;
-      }
-    } else {
-      imageSrc.value = null;
-    }
-}
+const setImageSrc = (imageKey: string) =>`https://localhost:7166/storage?fileKey=${imageKey}`;
 
 const handleFileUpload = async (event: Event) => {
   const fileInput = event.target as HTMLInputElement;
