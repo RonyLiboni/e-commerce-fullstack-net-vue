@@ -1,13 +1,15 @@
 <template>
 
   <div class="table-container">
+    <button class="create-button" @click="createProduct()">Create product</button>
     <div class="search-container">
-    <input
-      type="text"
-      placeholder="Search product by name"
-      v-model="parameters.name"
-    />
-  </div>
+      <input
+        type="text"
+        placeholder="Search product by name"
+        v-model="parameters.name"
+      />
+
+    </div>
     <table class="product-table">
       <thead>
         <tr>
@@ -23,7 +25,7 @@
           <td>{{ product.id }}</td>
           <td>{{ product.name }}</td>
           <td>{{ product.sku }}</td>
-          <td>{{ product.price }}</td>
+          <td>{{ formatCurrency(product.price) }}</td>
           <td>
             <button class="edit-button" @click="editProduct(product.id)">Edit</button>
           </td>
@@ -45,7 +47,7 @@
         Next
       </button>
 
-      <select v-model="parameters.pageSize" @change="print('page size changed ' + parameters.pageSize)" placeholder="Size per page">
+      <select v-model="parameters.pageSize" placeholder="Size per page">
         <option v-for="size in [2,10,15,20]" :key="size" :value="size">
           {{ size }} per page
         </option>
@@ -59,6 +61,9 @@ import { ref, onMounted, reactive, watch, } from 'vue';
 import axios from 'axios';
 import type { Page } from "../../types/Page";
 import type { Product, ProductManagementFindProductsParameters } from "../../types/ProductTypes";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const parameters = reactive<ProductManagementFindProductsParameters>({
   pageNumber: 1,
@@ -95,8 +100,20 @@ const updatePageNumber = (pageNumberSelected: number) => {
   parameters.pageNumber = pageNumberSelected;
 };
 
-const editProduct = async (product: number) => {
-  console.log(product);
+const createProduct = async () => {
+  router.push({ path: `/products-management/create` });
+}
+
+const editProduct = async (id: number) => {
+  router.push({ path: `/products-management/edit/${id}` });
+};
+
+const formatCurrency = (price: number) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  });
+  return formatter.format(price);
 };
 
 onMounted(fetchProducts);
@@ -141,6 +158,16 @@ onMounted(fetchProducts);
 }
 
 .edit-button {
+  padding: 6px 12px;
+  background-color: #0DCAF0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.create-button {
+  margin: 10px;
   padding: 6px 12px;
   background-color: #0DCAF0;
   border: none;

@@ -29,8 +29,10 @@
 
 <style scoped>
 footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+  margin-top: auto;
+  margin-top: 10px;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  text-align: center;
 }
 </style>

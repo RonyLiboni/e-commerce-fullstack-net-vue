@@ -1,4 +1,4 @@
-import { PageParameters } from './Page';
+import type { PageParameters } from './Page';
 import type { Category } from "./DepartmentTypes";
 
 export interface Product {
@@ -7,7 +7,6 @@ export interface Product {
   price: number;
   description: string;
   imageKey: string;
-  imagePath: string;
   categoryId: number;
   category: Category;
   name: string;

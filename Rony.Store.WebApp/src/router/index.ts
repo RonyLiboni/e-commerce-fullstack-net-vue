@@ -1,4 +1,5 @@
 import CustomerSearchView from "@/views/CustomerSearchView/CustomerSearchView.vue";
+import ProductForm from "@/views/Product/ProductForm.vue";
 import ProductManagementView from "@/views/Product/ProductManagementView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -15,6 +16,16 @@ const router = createRouter({
       name: "ProductManagementView",
       component: ProductManagementView,
     },
+    {
+      path: "/products-management/create",
+      name: "CreateProductForm",
+      component: ProductForm,
+    },
+    {
+      path: "/products-management/edit/:id",
+      name: "EditProductForm",
+      component: ProductForm,
+    }
   ],
 });
 
