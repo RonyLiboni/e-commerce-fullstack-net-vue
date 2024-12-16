@@ -1,13 +1,15 @@
 <template>
 
   <div class="table-container">
-    <button class="create-button" @click="createProduct()">Create product</button>
-    <div class="search-container">
+    <div class="flex">
+      <button class="create-button" @click="createProduct()">Create product</button>
+    <div class="search-container flex-items">
       <input
         type="text"
         placeholder="Search product by name"
         v-model="parameters.name"
       />
+    </div>
 
     </div>
     <table class="product-table">
@@ -211,4 +213,13 @@ onMounted(fetchProducts);
 .search-container button:hover {
   background-color: #3e5bb7;
 }
+
+.flex{
+  display: flex;
+}
+
+.flex-items{
+  flex-grow: 1;
+}
+
 </style>

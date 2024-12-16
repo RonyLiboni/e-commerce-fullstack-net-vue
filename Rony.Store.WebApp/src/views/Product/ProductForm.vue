@@ -4,29 +4,29 @@
       <h2 class="text-center mb-4">{{ isEditMode ? 'Edit Product' : 'Create Product' }}</h2>
       <form @submit.prevent="submitForm">
         <div class="mb-3">
-          <label for="productName" class="form-label">Product Name</label>
+          <label for="productName" class="form-label">Name</label>
           <input
             type="text"
             class="form-control"
             id="productName"
             v-model="product.name"
-            required
+            required maxlength="150"
           />
         </div>
 
         <div class="mb-3">
-          <label for="productSku" class="form-label">Product SKU</label>
+          <label for="productSku" class="form-label">SKU</label>
           <input
             type="text"
             class="form-control"
             id="productSku"
             v-model="product.sku"
-            required
+            required maxlength="36"
           />
         </div>
 
         <div class="mb-3">
-          <label for="productPrice" class="form-label">Product Price</label>
+          <label for="productPrice" class="form-label">Price</label>
           <input
             type="number"
             class="form-control"
@@ -37,7 +37,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="productDescription" class="form-label">Product Description</label>
+          <label for="productDescription" class="form-label">Description</label>
           <textarea
             class="form-control"
             id="productDescription"
