@@ -8,6 +8,28 @@
       </div>
 
       <div class="filter-section">
+        <h3>Department</h3>
+        <div v-for="department in departments" :key="department" class="checkbox-container">
+          <input type="checkbox" v-model="filters.departments" :value="department" class="checkbox-label"/>
+          <label> {{ department }}</label>
+        </div>
+      </div>
+      <div class="filter-section">
+        <h3>SubDepartment</h3>
+        <div v-for="subDepartment in subDepartments" :key="subDepartment" class="checkbox-container">
+          <input type="checkbox" v-model="filters.subDepartments" :value="subDepartment" class="checkbox-label"/>
+          <label> {{ subDepartment }}</label>
+        </div>
+      </div>
+      <div class="filter-section">
+        <h3>Category</h3>
+        <div v-for="category in categories" :key="category" class="checkbox-container">
+          <input type="checkbox" v-model="filters.categories" :value="category" class="checkbox-label" />
+          <label> {{ category }}</label>
+        </div>
+      </div>
+
+      <div class="filter-section">
         <h3>Order By</h3>
         <select v-model="filters.sortField" class="form-select">
           <option value="Price">Price</option>
@@ -54,7 +76,10 @@ import type { CustomerSearchFilter, Product } from '../../types/ProductTypes';
 
 const filters = reactive<CustomerSearchFilter>({
   pageNumber: 1,
-  pageSize: 10
+  pageSize: 10,
+  departments: [],
+  subDepartments: [],
+  categories: []
 });
 
 const products = reactive<Page<Product>>({
@@ -63,6 +88,10 @@ const products = reactive<Page<Product>>({
   pageNumber: 0,
   pageSize: 0,
 });
+
+const departments = reactive<string[]>([]);
+const subDepartments = reactive<string[]>([]);
+const categories = reactive<string[]>([]);
 
 const pageNumberChanged = ref(false);
 watch(() => filters.pageNumber, () => pageNumberChanged.value = true);
@@ -81,20 +110,65 @@ const setImageSrc = (imageKey: string) => `https://localhost:7166/storage?fileKe
 
 const fetchProducts = async () => {
   try {
+    const params = buildParams(filters);
     const response = await axios.get<Page<Product>>('https://localhost:7166/customer-search-filters', {
-      params: filters,
+      params: params,
     });
     Object.assign(products, response.data);
   } catch (error) {
     console.error('Error fetching products:', error);
   }
+  await fetchFilters();
 };
+
+const fetchFilters = async () => {
+  try {
+    const params = buildParams(filters, ['categories','subDepartments','departments']);
+    const response = await axios.get<CustomerSearchFilter>('https://localhost:7166/customer-search-filters/filters', {
+      params: params,
+    });
+    departments.splice(0, departments.length);
+    departments.push(...response.data.departments!);
+
+    subDepartments.splice(0, subDepartments.length);
+    subDepartments.push(...response.data.subDepartments!);
+
+    categories.splice(0, categories.length);
+    categories.push(...response.data.categories!);
+  } catch (error) {
+    console.error('Error fetching filters:', error);
+  }
+};
+
+const buildParams = (queryParams: any, keysToExclude?: string[])=>{
+  const params = new URLSearchParams();
+  for (const key in queryParams){
+    if(keysToExclude && keysToExclude.includes(key)) continue;
+
+    if (queryParams[key] === undefined || queryParams[key] === null || queryParams[key] === "") {
+      continue;
+    }
+
+    if (Array.isArray(queryParams[key]) && queryParams[key].length > 0) {
+      queryParams[key].forEach(item => params.append(key,item));
+      continue;
+    }
+
+    if(!Array.isArray(queryParams[key])){
+      params.append(key, queryParams[key]);
+    }
+  }
+  return params;
+}
 
 const clearFilters = () => {
   filters.name = undefined;
   filters.startPrice = undefined;
   filters.endPrice = undefined;
   filters.sortField = undefined;
+  filters.departments = [];
+  filters.subDepartments = [];
+  filters.categories = [];
   fetchProducts();
 };
 
@@ -102,8 +176,8 @@ const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 };
 
-onMounted(() => {
-  fetchProducts();
+onMounted(async () => {
+  await fetchProducts();
 });
 </script>
 
@@ -112,6 +186,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  align-items: flex-start;
 }
 
 .filters {
@@ -125,7 +200,10 @@ onMounted(() => {
 }
 
 .filter-section {
-  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 5px;
 }
 
 .filter-section h3 {
@@ -218,5 +296,17 @@ onMounted(() => {
 
 .product-info button:hover {
   background-color: var(--bs-info);
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.checkbox-label {
+  display: block;
+  word-break: break-word;
+  line-height: 1.2;
 }
 </style>

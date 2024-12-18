@@ -15,7 +15,10 @@ export interface Product {
 export interface CustomerSearchFilter extends PageParameters{
   name?: string,
   startPrice?: number,
-  endPrice?: number
+  endPrice?: number,
+  departments: string[],
+  subDepartments: string[],
+  categories: string[]
 }
 
 export interface ProductManagementFindProductsParameters extends PageParameters {
