@@ -8,7 +8,7 @@
     </button>
     <span>Page {{ pageParameters.pageNumber }} of {{ totalNumberOfPages }}</span>
     <button
-      :disabled="pageParameters.pageNumber == totalNumberOfPages"
+      :disabled="isLastPage"
       @click="pageParameters.pageNumber++"
     >
       Next
@@ -36,13 +36,20 @@ const pageParameters = reactive<PageParameters>(props.pageParameters!);
 const allowedPageSizes = props.allowedPageSizes ?? [2, 5,10,20];
 const isFirstPage = computed(() => pageParameters.pageNumber <= 1);
 const totalNumberOfPages = computed(() => Math.ceil(props.totalItemsCount / pageParameters.pageSize));
-
-// const changePagesOptions
+const isLastPage = computed(() => pageParameters.pageNumber == totalNumberOfPages.value || totalNumberOfPages.value == 0);
 
 watch(() => pageParameters.pageSize, () => pageParameters.pageNumber = 1);
 
 </script>
 
 <style scoped>
-
+.pagination-controls{
+  margin: 10px;
+  display: flex;
+  gap: 5px;
+}
+.pagination-controls * {
+  border: 1px solid var(--bs-info);
+  padding: 5px;
+}
 </style>
