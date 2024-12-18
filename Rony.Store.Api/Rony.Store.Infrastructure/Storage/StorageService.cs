@@ -87,6 +87,6 @@ public class StorageService : IStorageService
             return filePath;
         }
 
-        return null;
+        return Path.Combine(LONG_TERM_FOLDER_PATH, "noImageAvailable.jpeg");
     }
 }
