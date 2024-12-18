@@ -34,26 +34,8 @@
         </tr>
       </tbody>
     </table>
-    <div class="pagination-controls">
-      <button
-        :disabled="products.pageNumber === 1"
-        @click="updatePageNumber(products.pageNumber - 1)"
-      >
-        Previous
-      </button>
-      <span>Page {{ products.pageNumber }} of {{ Math.ceil(products.count/parameters.pageSize) }}</span>
-      <button
-        :disabled="products.pageNumber === Math.ceil(products.count/parameters.pageSize)"
-        @click="updatePageNumber(products.pageNumber + 1)"
-      >
-        Next
-      </button>
-
-      <select v-model="parameters.pageSize" placeholder="Size per page">
-        <option v-for="size in [2,10,15,20]" :key="size" :value="size">
-          {{ size }} per page
-        </option>
-      </select>
+    <div>
+      <AppPagination :pageParameters="parameters" :pageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
     </div>
   </div>
 </template>
@@ -64,6 +46,7 @@ import axios from 'axios';
 import type { Page } from "../../types/Page";
 import type { Product, ProductManagementFindProductsParameters } from "../../types/ProductTypes";
 import { useRouter } from 'vue-router';
+import AppPagination from '@/components/AppPagination.vue';
 
 const router = useRouter();
 
@@ -97,10 +80,6 @@ const fetchProducts = async () => {
 watch(parameters, async () => {
   await fetchProducts();
 });
-
-const updatePageNumber = (pageNumberSelected: number) => {
-  parameters.pageNumber = pageNumberSelected;
-};
 
 const createProduct = async () => {
   router.push({ path: `/products-management/create` });

@@ -42,9 +42,12 @@
       </div>
     </div>
   </div>
+  <AppPagination :pageParameters="filters" :pageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
+
 </template>
 
 <script setup lang="ts">
+import AppPagination from '@/components/AppPagination.vue';
 import axios from 'axios';
 import { reactive, onMounted, watch } from 'vue';
 import type { Page } from '../../types/Page';
