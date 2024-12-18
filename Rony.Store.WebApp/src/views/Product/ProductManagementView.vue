@@ -35,7 +35,7 @@
       </tbody>
     </table>
     <div>
-      <AppPagination :pageParameters="parameters" :pageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
+      <AppPagination :pageParameters="parameters" :allowedPageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
     </div>
   </div>
 </template>
@@ -77,8 +77,17 @@ const fetchProducts = async () => {
   }
 };
 
+const pageNumberChanged = ref(false);
+watch(() => parameters.pageNumber, () => pageNumberChanged.value = true);
+
 watch(parameters, async () => {
-  await fetchProducts();
+  if(pageNumberChanged.value){
+    await fetchProducts();
+  } else{
+    parameters.pageNumber = 1;
+    await fetchProducts();
+  }
+  pageNumberChanged.value = false;
 });
 
 const createProduct = async () => {

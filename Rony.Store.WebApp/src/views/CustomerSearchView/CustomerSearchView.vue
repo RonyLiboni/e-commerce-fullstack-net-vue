@@ -40,16 +40,15 @@
           </div>
         </div>
       </div>
+      <AppPagination :pageParameters="filters" :allowedPageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
     </div>
   </div>
-  <AppPagination :pageParameters="filters" :pageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
-
 </template>
 
 <script setup lang="ts">
 import AppPagination from '@/components/AppPagination.vue';
 import axios from 'axios';
-import { reactive, onMounted, watch } from 'vue';
+import { reactive, onMounted, watch, ref } from 'vue';
 import type { Page } from '../../types/Page';
 import type { CustomerSearchFilter, Product } from '../../types/ProductTypes';
 
@@ -65,8 +64,17 @@ const products = reactive<Page<Product>>({
   pageSize: 0,
 });
 
+const pageNumberChanged = ref(false);
+watch(() => filters.pageNumber, () => pageNumberChanged.value = true);
+
 watch(filters, async () => {
-  await fetchProducts();
+  if(pageNumberChanged.value){
+    await fetchProducts();
+  } else{
+    filters.pageNumber = 1;
+    await fetchProducts();
+  }
+  pageNumberChanged.value = false;
 });
 
 const setImageSrc = (imageKey: string) => `https://localhost:7166/storage?fileKey=${imageKey}`;
