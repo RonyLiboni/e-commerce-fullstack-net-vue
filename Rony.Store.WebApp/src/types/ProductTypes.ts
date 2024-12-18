@@ -15,9 +15,7 @@ export interface Product {
 export interface CustomerSearchFilter extends PageParameters{
   name?: string,
   startPrice?: number,
-  endPrice?: number,
-  sortField?: string,
-  orderByDescending?: boolean
+  endPrice?: number
 }
 
 export interface ProductManagementFindProductsParameters extends PageParameters {
