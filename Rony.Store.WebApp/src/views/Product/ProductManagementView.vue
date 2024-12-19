@@ -10,7 +10,6 @@
         v-model="parameters.name"
       />
     </div>
-
     </div>
     <table class="product-table">
       <thead>
@@ -22,7 +21,8 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <AppSpinner v-if="isLoadingProducts"/>
+      <tbody v-else>
         <tr v-for="product in products.results" :key="product.id">
           <td>{{ product.id }}</td>
           <td>{{ product.name }}</td>
@@ -34,26 +34,8 @@
         </tr>
       </tbody>
     </table>
-    <div class="pagination-controls">
-      <button
-        :disabled="products.pageNumber === 1"
-        @click="updatePageNumber(products.pageNumber - 1)"
-      >
-        Previous
-      </button>
-      <span>Page {{ products.pageNumber }} of {{ Math.ceil(products.count/parameters.pageSize) }}</span>
-      <button
-        :disabled="products.pageNumber === Math.ceil(products.count/parameters.pageSize)"
-        @click="updatePageNumber(products.pageNumber + 1)"
-      >
-        Next
-      </button>
-
-      <select v-model="parameters.pageSize" placeholder="Size per page">
-        <option v-for="size in [2,10,15,20]" :key="size" :value="size">
-          {{ size }} per page
-        </option>
-      </select>
+    <div>
+      <AppPagination :pageParameters="parameters" :allowedPageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
     </div>
   </div>
 </template>
@@ -64,6 +46,10 @@ import axios from 'axios';
 import type { Page } from "../../types/Page";
 import type { Product, ProductManagementFindProductsParameters } from "../../types/ProductTypes";
 import { useRouter } from 'vue-router';
+import AppPagination from '@/components/AppPagination.vue';
+import AppSpinner from '@/components/AppSpinner.vue';
+
+const isLoadingProducts = ref(false);
 
 const router = useRouter();
 
@@ -82,6 +68,7 @@ const products = reactive<Page<Product>>({
 const error = ref<string | null>(null);
 
 const fetchProducts = async () => {
+  isLoadingProducts.value = true;
   try {
     const response = await axios.get<Page<Product>>('https://localhost:7166/products',
       {
@@ -92,15 +79,21 @@ const fetchProducts = async () => {
   } catch  {
     error.value = 'An error ocurred try again in a few seconds.';
   }
+  isLoadingProducts.value = false;
 };
+
+const pageNumberChanged = ref(false);
+watch(() => parameters.pageNumber, () => pageNumberChanged.value = true);
 
 watch(parameters, async () => {
-  await fetchProducts();
+  if(pageNumberChanged.value){
+    await fetchProducts();
+  } else{
+    parameters.pageNumber = 1;
+    await fetchProducts();
+  }
+  pageNumberChanged.value = false;
 });
-
-const updatePageNumber = (pageNumberSelected: number) => {
-  parameters.pageNumber = pageNumberSelected;
-};
 
 const createProduct = async () => {
   router.push({ path: `/products-management/create` });

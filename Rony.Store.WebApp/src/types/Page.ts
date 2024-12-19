@@ -7,5 +7,7 @@ export interface Page<T>{
 
 export interface PageParameters{
   pageNumber: number,
-  pageSize: number
+  pageSize: number,
+  sortField?: string,
+  orderByDescending?: boolean
 }

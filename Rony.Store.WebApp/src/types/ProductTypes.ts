@@ -16,8 +16,9 @@ export interface CustomerSearchFilter extends PageParameters{
   name?: string,
   startPrice?: number,
   endPrice?: number,
-  sortField?: string,
-  orderByDescending?: boolean
+  departments: string[],
+  subDepartments: string[],
+  categories: string[]
 }
 
 export interface ProductManagementFindProductsParameters extends PageParameters {
