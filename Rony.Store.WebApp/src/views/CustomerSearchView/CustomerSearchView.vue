@@ -6,7 +6,6 @@
         <input v-model="filters.startPrice" placeholder="min price" />
         <input v-model="filters.endPrice" placeholder="max price" />
       </div>
-
       <div class="filter-section">
         <h3>Department</h3>
         <div v-for="department in departments" :key="department" class="checkbox-container">
@@ -28,7 +27,6 @@
           <label> {{ category }}</label>
         </div>
       </div>
-
       <div class="filter-section">
         <h3>Order By</h3>
         <select v-model="filters.sortField" class="form-select">
@@ -40,17 +38,17 @@
           <option value="true">Descending</option>
         </select>
       </div>
-
       <div class="actions">
         <button @click="clearFilters" class="btn btn-secondary mt-2">Clear Filters</button>
       </div>
     </div>
-
     <div class="product-search">
       <div class="search-bar border-info text-black">
         <input v-model="filters.name" placeholder="Search a product here" />
+        <h6>It was found {{ products.count ?? 0 }} items.</h6>
       </div>
-      <div class="products">
+      <AppSpinner v-if="isLoadingProducts"/>
+      <div v-else class="products">
         <div class="product-card" v-for="product in products.results" :key="product.id">
           <div class="product-image">
             <img v-if="product.imageKey && product.imageKey.trim() !== ''" :src="setImageSrc(product.imageKey)" alt="product image" />
@@ -68,11 +66,14 @@
 </template>
 
 <script setup lang="ts">
+import AppSpinner from '@/components/AppSpinner.vue';
 import AppPagination from '@/components/AppPagination.vue';
 import axios from 'axios';
 import { reactive, onMounted, watch, ref } from 'vue';
 import type { Page } from '../../types/Page';
 import type { CustomerSearchFilter, Product } from '../../types/ProductTypes';
+
+const isLoadingProducts = ref(false);
 
 const filters = reactive<CustomerSearchFilter>({
   pageNumber: 1,
@@ -109,16 +110,19 @@ watch(filters, async () => {
 const setImageSrc = (imageKey: string) => `https://localhost:7166/storage?fileKey=${imageKey}`;
 
 const fetchProducts = async () => {
+  isLoadingProducts.value = true;
   try {
     const params = buildParams(filters);
     const response = await axios.get<Page<Product>>('https://localhost:7166/customer-search-filters', {
       params: params,
     });
     Object.assign(products, response.data);
+
   } catch (error) {
     console.error('Error fetching products:', error);
   }
   await fetchFilters();
+  isLoadingProducts.value = false;
 };
 
 const fetchFilters = async () => {
@@ -220,20 +224,22 @@ onMounted(async () => {
 }
 
 .search-bar {
+  display: flex;
+  gap: 10px;
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   margin: 10px;
-  padding: 10px;
   border-radius: 5px;
   background-color: transparent;
   box-sizing: border-box;
+  align-items: center;
 }
 
 .search-bar input {
-  width: 100%;
   border: 2px solid var(--bs-info);
   padding: 5px;
   border-radius: 3px;
+  flex-grow: 1;
 }
 
 .products {

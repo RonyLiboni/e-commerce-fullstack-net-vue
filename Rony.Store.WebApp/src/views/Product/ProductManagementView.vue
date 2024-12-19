@@ -10,7 +10,6 @@
         v-model="parameters.name"
       />
     </div>
-
     </div>
     <table class="product-table">
       <thead>
@@ -22,7 +21,8 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <AppSpinner v-if="isLoadingProducts"/>
+      <tbody v-else>
         <tr v-for="product in products.results" :key="product.id">
           <td>{{ product.id }}</td>
           <td>{{ product.name }}</td>
@@ -47,6 +47,9 @@ import type { Page } from "../../types/Page";
 import type { Product, ProductManagementFindProductsParameters } from "../../types/ProductTypes";
 import { useRouter } from 'vue-router';
 import AppPagination from '@/components/AppPagination.vue';
+import AppSpinner from '@/components/AppSpinner.vue';
+
+const isLoadingProducts = ref(false);
 
 const router = useRouter();
 
@@ -65,6 +68,7 @@ const products = reactive<Page<Product>>({
 const error = ref<string | null>(null);
 
 const fetchProducts = async () => {
+  isLoadingProducts.value = true;
   try {
     const response = await axios.get<Page<Product>>('https://localhost:7166/products',
       {
@@ -75,6 +79,7 @@ const fetchProducts = async () => {
   } catch  {
     error.value = 'An error ocurred try again in a few seconds.';
   }
+  isLoadingProducts.value = false;
 };
 
 const pageNumberChanged = ref(false);
