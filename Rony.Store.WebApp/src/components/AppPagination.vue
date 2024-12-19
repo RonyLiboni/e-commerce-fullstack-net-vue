@@ -44,7 +44,7 @@ watch(() => pageParameters.pageSize, () => pageParameters.pageNumber = 1);
 
 <style scoped>
 .pagination-controls{
-  margin: 10px;
+  margin-top: 10px;
   display: flex;
   gap: 5px;
 }

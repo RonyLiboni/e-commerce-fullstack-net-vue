@@ -8,23 +8,30 @@
       </div>
       <div class="filter-section">
         <h3>Department</h3>
-        <div v-for="department in departments" :key="department" class="checkbox-container">
-          <input type="checkbox" v-model="filters.departments" :value="department" class="checkbox-label"/>
-          <label> {{ department }}</label>
+        <div v-for="department in departments" :key="department">
+
+          <label class="checkbox-container">
+            <input type="checkbox" v-model="filters.departments" :value="department" class="checkbox-label"/>
+            {{ department }}
+          </label>
         </div>
       </div>
       <div class="filter-section">
         <h3>SubDepartment</h3>
-        <div v-for="subDepartment in subDepartments" :key="subDepartment" class="checkbox-container">
-          <input type="checkbox" v-model="filters.subDepartments" :value="subDepartment" class="checkbox-label"/>
-          <label> {{ subDepartment }}</label>
+        <div v-for="subDepartment in subDepartments" :key="subDepartment" >
+          <label class="checkbox-container">
+            <input type="checkbox" v-model="filters.subDepartments" :value="subDepartment" class="checkbox-label"/>
+            {{ subDepartment }}
+          </label>
         </div>
       </div>
       <div class="filter-section">
         <h3>Category</h3>
-        <div v-for="category in categories" :key="category" class="checkbox-container">
-          <input type="checkbox" v-model="filters.categories" :value="category" class="checkbox-label" />
-          <label> {{ category }}</label>
+        <div v-for="category in categories" :key="category">
+          <label class="checkbox-container">
+            <input type="checkbox" v-model="filters.categories" :value="category" class="checkbox-label" />
+            {{ category }}
+          </label>
         </div>
       </div>
       <div class="filter-section">
@@ -194,7 +201,8 @@ onMounted(async () => {
 }
 
 .filters {
-  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
   padding: 10px;
   border: 2px solid var(--bs-info);
   border-radius: 5px;
@@ -228,7 +236,7 @@ onMounted(async () => {
   gap: 10px;
   width: 100%;
   max-width: 800px;
-  margin: 10px;
+  margin: 10px 0px;
   border-radius: 5px;
   background-color: transparent;
   box-sizing: border-box;
