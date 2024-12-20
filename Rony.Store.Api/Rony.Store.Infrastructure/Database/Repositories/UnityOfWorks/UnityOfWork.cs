@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rony.Store.Domain.Contracts.Repositories.UnitOfWorks;
 using Rony.Store.Domain.Exceptions;
+using System.Text.RegularExpressions;
 
 namespace Rony.Store.Infrastructure.Database.Repositories.UnityOfWorks;
 public class UnitOfWork(StoreContext dbContext) : IUnitOfWork
@@ -14,14 +15,16 @@ public class UnitOfWork(StoreContext dbContext) : IUnitOfWork
         catch (DbUpdateException e)
         {
             var errorMessage = e.InnerException!.Message ?? e.Message!;
-            if (errorMessage.Contains("Duplicate"))
+            if (errorMessage.Contains("duplicate", StringComparison.CurrentCultureIgnoreCase))
             {
-                throw new EntityMustBeUniqueException(errorMessage);
+                var uniqueConstraintName = Regex.Match(errorMessage, @"IX_\w+").Value.Split("_").LastOrDefault() ?? "";
+                throw new EntityMustBeUniqueException(string.IsNullOrEmpty(uniqueConstraintName) ? e.Message : $"Field with duplicated value: {uniqueConstraintName}");
             }
-
-            throw e;
-
+            if (errorMessage.Contains("foreign key", StringComparison.CurrentCultureIgnoreCase))
+            {
+                throw new ForeignKeyRelatedExceptionn(e.Message);
+            }
+            throw;
         }
-        
     }
 }
