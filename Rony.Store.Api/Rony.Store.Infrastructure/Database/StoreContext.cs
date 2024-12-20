@@ -35,11 +35,11 @@ public class StoreContext(DbContextOptions<StoreContext> options) : DbContext(op
                             .ValueGeneratedOnAdd()
                             .IsRequired();
             subDepartment.HasKey(subDepartment => subDepartment.Id)
-                            .HasName("PK_Sub_Department");
+                            .HasName("PK_SubDepartment");
             subDepartment.HasOne(subDepartment => subDepartment.Department)
                             .WithMany(department => department.SubDepartments)
                             .HasForeignKey(subDepartment => subDepartment.DepartmentId)
-                            .HasConstraintName("FK_Sub_Department_Department_Id")
+                            .HasConstraintName("FK_SubDepartment_DepartmentId")
                             .OnDelete(DeleteBehavior.Cascade);
             subDepartment.HasMany(subDepartment => subDepartment.Categories)
                            .WithOne(category => category.SubDepartment)
@@ -66,7 +66,7 @@ public class StoreContext(DbContextOptions<StoreContext> options) : DbContext(op
             category.HasOne(category => category.SubDepartment)
                             .WithMany(department => department.Categories)
                             .HasForeignKey(category => category.SubDepartmentId)
-                            .HasConstraintName("FK_Category_Sub_Department_Id")
+                            .HasConstraintName("FK_Category_SubDepartmentId")
                             .OnDelete(DeleteBehavior.Cascade);
             category.Property(category => category.Name)
                             .HasMaxLength(50);
