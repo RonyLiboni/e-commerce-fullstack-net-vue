@@ -30,7 +30,7 @@ public class StoreContext(DbContextOptions<StoreContext> options) : DbContext(op
 
         modelBuilder.Entity<SubDepartment>(subDepartment =>
         {
-            subDepartment.ToTable("Sub_Departments");
+            subDepartment.ToTable("SubDepartments");
             subDepartment.Property(subDepartment => subDepartment.Id)
                             .ValueGeneratedOnAdd()
                             .IsRequired();
