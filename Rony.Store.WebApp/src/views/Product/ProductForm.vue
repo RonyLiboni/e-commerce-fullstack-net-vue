@@ -10,7 +10,6 @@
             class="form-control"
             id="productName"
             v-model="product.name"
-            required maxlength="150"
           />
         </div>
 
@@ -21,7 +20,6 @@
             class="form-control"
             id="productSku"
             v-model="product.sku"
-            required maxlength="36"
           />
         </div>
 
@@ -33,7 +31,6 @@
             class="form-control"
             id="productPrice"
             v-model="product.price"
-            required
           />
         </div>
 
@@ -44,7 +41,6 @@
             id="productDescription"
             v-model="product.description"
             rows="2"
-            required maxlength="250"
           ></textarea>
         </div>
 
@@ -54,7 +50,6 @@
             class="form-select"
             id="categoryId"
             v-model="product.categoryId"
-            required
           >
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
@@ -147,8 +142,9 @@ const handleFileUpload = async (event: Event) => {
     }
   }
 };
-
+const errorResponse = ref<string>("");
 const submitForm = async () => {
+  errorResponse.value = '';
   try {
     if (isEditMode.value) {
       await axios.put(`https://localhost:7166/products/${product.id}`, product);
@@ -157,7 +153,10 @@ const submitForm = async () => {
     }
     router.push('/products-management');
   } catch (error) {
-    console.error(error);
+    if (axios.isAxiosError(error) && error.response) {
+      const errorMessages = error.response.data.errors ? Object.values(error.response.data.errors!).join(' ') : '';
+      errorResponse.value = error.response.data.Detail ?? errorMessages;
+    }
   }
 };
 </script>
@@ -206,5 +205,11 @@ button {
 .buttons-actions{
   display: flex;
   gap: 10%;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+  font-size: 0.7rem;
+  color: red;
 }
 </style>
