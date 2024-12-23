@@ -42,16 +42,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, } from 'vue';
-import axios from 'axios';
 import type { Page } from "../../types/Page";
 import type { Product, ProductManagementFindProductsParameters } from "../../types/ProductTypes";
 import { useRouter } from 'vue-router';
 import AppPagination from '@/components/AppPagination.vue';
 import AppSpinner from '@/components/AppSpinner.vue';
+import { ProductService } from '@/services/products/productService';
 
+const productService = new ProductService();
 const isLoadingProducts = ref(false);
-
 const router = useRouter();
+const error = ref<string | null>(null);
+const pageNumberChanged = ref(false);
 
 const parameters = reactive<ProductManagementFindProductsParameters>({
   pageNumber: 1,
@@ -65,24 +67,6 @@ const products = reactive<Page<Product>>({
   pageSize: 0
 });
 
-const error = ref<string | null>(null);
-
-const fetchProducts = async () => {
-  isLoadingProducts.value = true;
-  try {
-    const response = await axios.get<Page<Product>>('https://localhost:7166/products',
-      {
-        params: parameters
-      }
-    );
-    Object.assign(products, response.data);
-  } catch  {
-    error.value = 'An error ocurred try again in a few seconds.';
-  }
-  isLoadingProducts.value = false;
-};
-
-const pageNumberChanged = ref(false);
 watch(() => parameters.pageNumber, () => pageNumberChanged.value = true);
 
 watch(parameters, async () => {
@@ -94,6 +78,17 @@ watch(parameters, async () => {
   }
   pageNumberChanged.value = false;
 });
+
+const fetchProducts = async () => {
+  isLoadingProducts.value = true;
+  try {
+    const response = await productService.find(parameters);
+    Object.assign(products, response.data);
+  } catch  {
+    error.value = 'An error ocurred try again in a few seconds.';
+  }
+  isLoadingProducts.value = false;
+};
 
 const createProduct = async () => {
   router.push({ path: `/products-management/create` });

@@ -88,7 +88,16 @@ import { reactive, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import type { Category } from "../../types/DepartmentTypes";
+import { ProductService } from '@/services/products/productService';
+import type { Product } from '@/types/ProductTypes';
+import { CategoryService } from '@/services/departments/categoryService';
+import { StorageService } from '@/services/infrastructure/storageService';
 
+const productService = new ProductService();
+const categoryService = new CategoryService();
+const storageService = new StorageService();
+
+const errorResponse = ref<string>("");
 const categories = reactive<Category[]>([]);
 const isEditMode = ref(false);
 const route = useRoute();
@@ -107,23 +116,20 @@ const back = () => router.push("/products-management");
 
 onMounted(async () => {
   try {
-    const response = await axios.get<Category[]>('https://localhost:7166/categories');
+    const response = await categoryService.findAllCategories();
     categories.push(...response.data);
 
     if (route.params.id) {
       isEditMode.value = true;
-
-      const productResponse = await axios.get(`https://localhost:7166/products/${route.params.id}`);
+      const productResponse = await productService.findById(Number(route.params.id));
       Object.assign(product, productResponse.data);
-
-      await setImageSrc(product.imageKey);
     }
   } catch (error) {
     console.error(error);
   }
 });
 
-const setImageSrc = (imageKey: string) =>`https://localhost:7166/storage?fileKey=${imageKey}`;
+const setImageSrc = (imageKey: string) => storageService.getFileUrl(imageKey);
 
 const handleFileUpload = async (event: Event) => {
   const fileInput = event.target as HTMLInputElement;
@@ -134,26 +140,20 @@ const handleFileUpload = async (event: Event) => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('https://localhost:7166/storage', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      product.imageKey = response.data.fileKey;
+      const fileKey = await storageService.addInTemporaryStorage(formData);
+      product.imageKey = fileKey;
     } catch (error) {
       console.error(error);
     }
   }
 };
-const errorResponse = ref<string>("");
 const submitForm = async () => {
   errorResponse.value = '';
   try {
     if (isEditMode.value) {
-      await axios.put(`https://localhost:7166/products/${product.id}`, product);
+      await productService.edit(product.id, product as Product);
     } else {
-      await axios.post('https://localhost:7166/products', product);
+      await productService.create(product as Product);
     }
     router.push('/products-management');
   } catch (error) {

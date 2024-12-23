@@ -80,8 +80,16 @@ import axios from 'axios';
 import { reactive, onMounted, watch, ref } from 'vue';
 import type { Page } from '../../types/Page';
 import type { CustomerSearchFilter, Product } from '../../types/ProductTypes';
+import { CustomerSearchFilterService } from '@/services/products/customerSearchFilterService';
+import { StorageService } from '@/services/infrastructure/storageService';
 
+const customerSearchFilterService = new CustomerSearchFilterService();
+const storageService = new StorageService();
 const isLoadingProducts = ref(false);
+const errorResponse = ref<string>('');
+const departments = reactive<string[]>([]);
+const subDepartments = reactive<string[]>([]);
+const categories = reactive<string[]>([]);
 
 const filters = reactive<CustomerSearchFilter>({
   pageNumber: 1,
@@ -98,10 +106,6 @@ const products = reactive<Page<Product>>({
   pageSize: 0,
 });
 
-const departments = reactive<string[]>([]);
-const subDepartments = reactive<string[]>([]);
-const categories = reactive<string[]>([]);
-
 const pageNumberChanged = ref(false);
 watch(() => filters.pageNumber, () => pageNumberChanged.value = true);
 
@@ -115,21 +119,15 @@ watch(filters, async () => {
   pageNumberChanged.value = false;
 });
 
-const setImageSrc = (imageKey: string) => `https://localhost:7166/storage?fileKey=${getValidImageKey(imageKey)}`;
-
+const setImageSrc = (imageKey: string) => storageService.getFileUrl(getValidImageKey(imageKey));
 const getValidImageKey = (imageKey: string) => imageKey == '' ? 'noImageAvailable.jpg' : imageKey;
 
-const errorResponse = ref<string>('');
 const fetchProducts = async () => {
   isLoadingProducts.value = true;
   errorResponse.value = ''
   try {
-    const params = buildParams(filters);
-    const response = await axios.get<Page<Product>>('https://localhost:7166/customer-search-filters', {
-      params: params,
-    });
+    const response = await customerSearchFilterService.find(filters);
     Object.assign(products, response.data);
-
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       errorResponse.value = 'Error while getting products: ' + error.response.data.Detail;
@@ -141,10 +139,7 @@ const fetchProducts = async () => {
 
 const fetchFilters = async () => {
   try {
-    const params = buildParams(filters, ['categories','subDepartments','departments']);
-    const response = await axios.get<CustomerSearchFilter>('https://localhost:7166/customer-search-filters/filters', {
-      params: params,
-    });
+    const response = await customerSearchFilterService.findFilters(filters);
     departments.splice(0, departments.length);
     departments.push(...response.data.departments!);
 
@@ -159,27 +154,6 @@ const fetchFilters = async () => {
     }
   }
 };
-
-const buildParams = (queryParams: any, keysToExclude?: string[])=>{
-  const params = new URLSearchParams();
-  for (const key in queryParams){
-    if(keysToExclude && keysToExclude.includes(key)) continue;
-
-    if (queryParams[key] === undefined || queryParams[key] === null || queryParams[key] === "") {
-      continue;
-    }
-
-    if (Array.isArray(queryParams[key]) && queryParams[key].length > 0) {
-      queryParams[key].forEach(item => params.append(key,item));
-      continue;
-    }
-
-    if(!Array.isArray(queryParams[key])){
-      params.append(key, queryParams[key]);
-    }
-  }
-  return params;
-}
 
 const clearFilters = () => {
   filters.name = undefined;
