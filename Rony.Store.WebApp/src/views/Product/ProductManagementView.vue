@@ -162,7 +162,7 @@ onMounted(fetchProducts);
 }
 
 .create-button {
-  margin: 10px;
+  margin: 10px 0;
   padding: 6px 12px;
   background-color: #0DCAF0;
   border: none;
@@ -189,8 +189,8 @@ onMounted(fetchProducts);
   border-radius: 5px;
   padding: 8px 12px;
   font-size: 14px;
-  flex-grow: 1;  /* Faz o input ocupar o restante do espaço disponível */
-  margin-right: 10px;  /* Espaçamento entre o campo de input e o botão */
+  flex-grow: 1;
+  margin-right: 10px;
 }
 
 .search-container button {

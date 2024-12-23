@@ -74,6 +74,10 @@
           <button class="btn btn-danger w-100" @click="back">Return</button>
           <button type="submit" class="btn btn-primary w-100">{{ isEditMode ? 'Update' : 'Create' }}</button>
         </div>
+        <div class="is-invalid" v-show="errorResponse != ''">
+          <br>
+          <div class="is-invalid" v-for="errorMessage in errorResponse.split(';')" :key='errorMessage'> {{ errorMessage }}</div>
+        </div>
       </form>
     </div>
   </div>
@@ -154,7 +158,7 @@ const submitForm = async () => {
     router.push('/products-management');
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      const errorMessages = error.response.data.errors ? Object.values(error.response.data.errors!).join(' ') : '';
+      const errorMessages = error.response.data.errors ? Object.values(error.response.data.errors!).join(';') : '';
       errorResponse.value = error.response.data.Detail ?? errorMessages;
     }
   }
