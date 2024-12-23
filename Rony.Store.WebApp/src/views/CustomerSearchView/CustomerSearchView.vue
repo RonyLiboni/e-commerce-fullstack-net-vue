@@ -1,10 +1,11 @@
 <template>
+  <div class="is-error" v-show="errorResponse != ''"> {{ errorResponse }}</div>
   <div class="customer-search-view">
     <div class="filters border-info text-black p-3">
       <div class="filter-section">
         <h3>Price range</h3>
-        <input v-model="filters.startPrice" placeholder="min price" />
-        <input v-model="filters.endPrice" placeholder="max price" />
+        <input v-model="filters.startPrice" placeholder="min price" type="number" step="0.01"/>
+        <input v-model="filters.endPrice" placeholder="max price" type="number" step="0.01"/>
       </div>
       <div class="filter-section">
         <h3>Department</h3>
@@ -58,7 +59,7 @@
       <div v-else class="products">
         <div class="product-card" v-for="product in products.results" :key="product.id">
           <div class="product-image">
-            <img v-if="product.imageKey && product.imageKey.trim() !== ''" :src="setImageSrc(product.imageKey)" alt="product image" />
+            <img :src="setImageSrc(product.imageKey)" alt="product image" />
           </div>
           <div class="product-info">
             <h4>{{ product.name }}</h4>
@@ -114,10 +115,14 @@ watch(filters, async () => {
   pageNumberChanged.value = false;
 });
 
-const setImageSrc = (imageKey: string) => `https://localhost:7166/storage?fileKey=${imageKey}`;
+const setImageSrc = (imageKey: string) => `https://localhost:7166/storage?fileKey=${getValidImageKey(imageKey)}`;
 
+const getValidImageKey = (imageKey: string) => imageKey == '' ? 'noImageAvailable.jpg' : imageKey;
+
+const errorResponse = ref<string>('');
 const fetchProducts = async () => {
   isLoadingProducts.value = true;
+  errorResponse.value = ''
   try {
     const params = buildParams(filters);
     const response = await axios.get<Page<Product>>('https://localhost:7166/customer-search-filters', {
@@ -126,7 +131,9 @@ const fetchProducts = async () => {
     Object.assign(products, response.data);
 
   } catch (error) {
-    console.error('Error fetching products:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      errorResponse.value = 'Error while getting products: ' + error.response.data.Detail;
+    }
   }
   await fetchFilters();
   isLoadingProducts.value = false;
@@ -147,7 +154,9 @@ const fetchFilters = async () => {
     categories.splice(0, categories.length);
     categories.push(...response.data.categories!);
   } catch (error) {
-    console.error('Error fetching filters:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      errorResponse.value = 'Error while getting filters: ' + error.response.data.Detail;
+    }
   }
 };
 
@@ -322,5 +331,12 @@ onMounted(async () => {
   display: block;
   word-break: break-word;
   line-height: 1.2;
+}
+
+.is-error {
+  border-color: #dc3545;
+  color: red;
+  margin: 10px;
+  background-color: #fd8e99;
 }
 </style>
