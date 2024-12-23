@@ -19,7 +19,7 @@ public abstract class BaseRepository<Entity, Id> : IBaseRepository<Entity, Id> w
         await _DbSet.AddAsync(entity);
     }
 
-    public virtual async Task<Entity> FindById(Id id)
+    public virtual async Task<Entity> FindByIdAsync(Id id)
     {
         return await _DbSet.FindAsync(id) ?? throw new EntityNotFoundException($"{EntityName()} with id '{id}' was not found");
     }
@@ -29,6 +29,6 @@ public abstract class BaseRepository<Entity, Id> : IBaseRepository<Entity, Id> w
         (await _DbSet.AddAsync(entity)).State = EntityState.Modified;
     }
 
-    protected abstract string EntityName();
+    protected virtual string EntityName() => typeof(Entity).Name;
 
 }

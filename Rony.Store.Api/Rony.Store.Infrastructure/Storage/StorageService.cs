@@ -7,7 +7,7 @@ public class StorageService : IStorageService
     private readonly string TEMPORARY_FOLDER_PATH = BuildFolderPath("TemporaryFiles");
     private readonly string LONG_TERM_FOLDER_PATH = BuildFolderPath("LongTermFiles");
 
-    public async Task<string> UploadFileInTemporaryStorage(IFormFile file)
+    public async Task<string> UploadFileInTemporaryStorageAsync(IFormFile file)
     {
         CreateFolderIfDoNotExist(TEMPORARY_FOLDER_PATH);
         string fileKey = Guid.NewGuid() + Path.GetExtension(file.FileName);
@@ -71,7 +71,7 @@ public class StorageService : IStorageService
         return Path.Combine(Directory.GetCurrentDirectory(), folderName).Replace("\\Rony.Store.Api\\Rony.Store.Api\\", "\\Rony.Store.Api\\Rony.Store.Infrastructure\\Storage\\");
     }
 
-    public string GetByFileKeyAsync(string fileKey)
+    public string GetByFileKey(string fileKey)
     {
         var filePath = Path.Combine(LONG_TERM_FOLDER_PATH, fileKey);
 

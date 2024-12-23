@@ -20,16 +20,19 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
     public async Task CreateAsync(ProductFormDTO entity)
     {
-        storageService.MoveFileToLongTermStorage(entity.ImageKey);
         await base.CreateAsync(entity);
+        storageService.MoveFileToLongTermStorage(entity.ImageKey);
     }
 
     public async Task UpdateByIdAsync(ProductFormDTO form, int id)
     {
         var entity = await FindByIdAsync(id);
-        var imagePathChanged = entity.ImageKey != form.ImageKey;
         var oldImageKey = entity.ImageKey;
+        var imagePathChanged = entity.ImageKey != form.ImageKey;
 
+        await productRepository.UpdateAsync(mapper.Map(form, entity));
+        await unitOfWork.SaveChangesAsync();
+                
         if (!storageService.IsFileInLongTermStorage(form.ImageKey))
         {
             storageService.MoveFileToLongTermStorage(form.ImageKey);
@@ -39,8 +42,5 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         {
             storageService.RemoveFile(oldImageKey);
         }
-
-        await productRepository.UpdateAsync(mapper.Map(form, entity));
-        await unitOfWork.SaveChangesAsync();
     }
 }

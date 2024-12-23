@@ -5,5 +5,4 @@ using Rony.Store.Infrastructure.Database.Repositories.BaseRepositories;
 namespace Rony.Store.Infrastructure.Database.Repositories.Departments;
 public class SubDepartmentRepository(StoreContext context) : BaseRepository<SubDepartment, int>(context), ISubDepartmentRepository
 {
-    protected override string EntityName() => "SubDepartment";
 }

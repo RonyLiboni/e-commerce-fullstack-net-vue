@@ -27,7 +27,7 @@ public class DepartmentRepository(StoreContext context) : BaseRepository<Departm
         return results;
     }
 
-    public override async Task<Department> FindById(int id)
+    public override async Task<Department> FindByIdAsync(int id)
     {
        return await _DbSet
             .Include(department => department.SubDepartments)
@@ -35,6 +35,4 @@ public class DepartmentRepository(StoreContext context) : BaseRepository<Departm
             .FirstOrDefaultAsync(department => department.Id == id)
              ?? throw new EntityNotFoundException($"{EntityName()} with id '{id}' was not found");
     }
-
-    protected override string EntityName() => "Department";
 }

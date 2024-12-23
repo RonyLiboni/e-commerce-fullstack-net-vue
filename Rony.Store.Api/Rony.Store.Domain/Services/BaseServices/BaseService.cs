@@ -25,7 +25,7 @@ public abstract class BaseService<Entity, Id> : IBaseService<Entity, Id> where E
 
     public async Task<Entity> FindByIdAsync(Id Id)
     {
-        return await _repository.FindById(Id);
+        return await _repository.FindByIdAsync(Id);
     }
 
     public async Task<EntityDTO> FindDTOByIdAsync<EntityDTO>(Id id)

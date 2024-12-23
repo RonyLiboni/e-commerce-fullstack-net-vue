@@ -11,6 +11,6 @@ public class CategoryService(ICategoryRepository categoryRepository, IUnitOfWork
 {
     public async Task<List<CategoryDTO>> FindAllAsync()
     {
-        return _mapper.Map<List<CategoryDTO>>(await categoryRepository.FindAll());
+        return _mapper.Map<List<CategoryDTO>>(await categoryRepository.FindAllAsync());
     }
 }

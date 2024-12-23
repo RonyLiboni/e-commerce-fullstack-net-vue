@@ -10,15 +10,15 @@ namespace Rony.Store.Api.Controllers.Storage;
 public class StorageController(IStorageService storageService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> UploadImageToTemporaryStorage([Required] IFormFile file)
+    public async Task<IActionResult> UploadImageToTemporaryStorageAsync([Required] IFormFile file)
     {
-        return Ok(new { fileKey = await storageService.UploadFileInTemporaryStorage(file) });
+        return Ok(new { fileKey = await storageService.UploadFileInTemporaryStorageAsync(file) });
     }
 
     [HttpGet]
-    public IActionResult GetByFileKeyAsync([FromQuery] string fileKey)
+    public IActionResult GetByFileKey([FromQuery] string fileKey)
     {
-        var filePath = storageService.GetByFileKeyAsync(fileKey);
+        var filePath = storageService.GetByFileKey(fileKey);
 
         var provider = new FileExtensionContentTypeProvider();
         if (!provider.TryGetContentType(filePath, out var contentType))

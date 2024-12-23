@@ -10,7 +10,7 @@ using Rony.Store.Infrastructure.Database.Repositories.BaseRepositories;
 namespace Rony.Store.Infrastructure.Database.Repositories.Products;
 public class ProductRepository(StoreContext context) : BaseRepository<Product, int>(context), IProductRepository
 {
-    public override async Task<Product> FindById(int id)
+    public override async Task<Product> FindByIdAsync(int id)
     {
         return await _DbSet
              .Include(product => product.Category)
@@ -35,7 +35,6 @@ public class ProductRepository(StoreContext context) : BaseRepository<Product, i
 
         return results;
     }
-    protected override string EntityName() => "Product";
 
     public async Task<List<Product>> FindProductsByCustomerSearchFiltersAsync(FindProductsByCustomerSearchFiltersParameters parameters)
     {
