@@ -2,59 +2,75 @@
   <div class="container">
     <div class="form-container bg-white p-4 rounded" style="max-width: 1000px; width: 100%;">
       <h2 class="text-center mb-4">{{ isEditMode ? 'Edit Product' : 'Create Product' }}</h2>
-      <form @submit.prevent="submitForm">
+      <Form :validation-schema="schema" @submit="submitForm">
         <div class="mb-3">
-          <label for="productName" class="form-label">Name</label>
-          <input
+          <label for="name" class="form-label">Name</label>
+          <Field
+            id="name"
+            name="name"
             type="text"
             class="form-control"
-            id="productName"
+            placeholder="Product name"
             v-model="product.name"
           />
+          <ErrorMessage name="name" class="is-invalid" />
         </div>
 
         <div class="mb-3">
-          <label for="productSku" class="form-label">SKU</label>
-          <input
+          <label for="sku" class="form-label">SKU</label>
+          <Field
+            id="sku"
+            name="sku"
             type="text"
             class="form-control"
-            id="productSku"
+            placeholder="Product stock keeping unit"
             v-model="product.sku"
           />
+          <ErrorMessage name="sku" class="is-invalid" />
         </div>
 
         <div class="mb-3">
-          <label for="productPrice" class="form-label">Price</label>
-          <input
+          <label for="price" class="form-label">Price</label>
+          <Field
+            id="price"
+            name="price"
             type="number"
             step="0.01"
             class="form-control"
-            id="productPrice"
+            placeholder="Price"
             v-model="product.price"
           />
+          <ErrorMessage name="price" class="is-invalid" />
         </div>
 
         <div class="mb-3">
-          <label for="productDescription" class="form-label">Description</label>
-          <textarea
+          <label for="description" class="form-label">Description</label>
+          <Field
+            id="description"
+            name="description"
+            type="text"
             class="form-control"
-            id="productDescription"
+            placeholder="Product description"
             v-model="product.description"
-            rows="2"
-          ></textarea>
+          />
+          <ErrorMessage name="description" class="is-invalid" />
         </div>
 
         <div class="mb-3">
           <label for="categoryId" class="form-label">Category</label>
-          <select
+          <Field
+            as="select"
             class="form-select"
             id="categoryId"
+            name="categoryId"
             v-model="product.categoryId"
           >
+            <option value="0" disabled selected>Select a category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
             </option>
-          </select>
+          </Field>
+          <ErrorMessage name="categoryId" class="is-invalid" />
         </div>
 
         <div class="mb-3">
@@ -78,7 +94,7 @@
           <br>
           <div class="is-invalid" v-for="errorMessage in errorResponse.split(';')" :key='errorMessage'> {{ errorMessage }}</div>
         </div>
-      </form>
+      </Form>
     </div>
   </div>
 </template>
@@ -92,6 +108,9 @@ import { ProductService } from '@/services/products/productService';
 import type { Product } from '@/types/ProductTypes';
 import { CategoryService } from '@/services/departments/categoryService';
 import { StorageService } from '@/services/infrastructure/storageService';
+
+import { Field, Form, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const productService = new ProductService();
 const categoryService = new CategoryService();
@@ -147,6 +166,32 @@ const handleFileUpload = async (event: Event) => {
     }
   }
 };
+
+const schema = yup.object({
+  name: yup
+    .string()
+    .required('Name is required')
+    .max(150, 'Name must have 50 or less characters'),
+  sku: yup
+    .string()
+    .required('Sku is required')
+    .max(36, 'Sku must have 36 or less characters'),
+  price: yup
+    .number()
+    .required('Price is required.')
+    .typeError('Must be a number.')
+    .positive('Price must be bigger than zero.')
+    .max(99999999.99, 'Max price allowed is 99999999.99'),
+  description: yup
+    .string()
+    .required('Description is required')
+    .max(250, 'Description must have 250 or less characters'),
+  categoryId: yup
+    .number()
+    .required('Category is required.')
+    .min(1,'Category is required.')
+});
+
 const submitForm = async () => {
   errorResponse.value = '';
   try {
