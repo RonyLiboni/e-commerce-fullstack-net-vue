@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Rony.Store.Api.Security;
 using Rony.Store.Domain.Contracts.Services.BaseServices;
 
 namespace Rony.Store.Api.Controllers.BaseController;
 
 [Controller]
+[AuthorizedRoles]
 public class BaseCreateReadUpdateController<Entity,Id,Form,DTO>(IBaseService<Entity, Id> baseService) : ControllerBase
 {
-
     [HttpGet("{id}")]
     public async Task<IActionResult> FindByIdAsync([FromRoute] Id id)
     {

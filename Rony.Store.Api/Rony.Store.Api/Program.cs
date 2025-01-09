@@ -20,6 +20,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
@@ -35,4 +37,3 @@ app.UseCors((builder) =>
 });
 
 app.Run();
-

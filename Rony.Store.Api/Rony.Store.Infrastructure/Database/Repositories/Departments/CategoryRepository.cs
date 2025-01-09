@@ -8,6 +8,6 @@ public class CategoryRepository(StoreContext context) : BaseRepository<Category,
 {
     public async Task<List<Category>> FindAllAsync()
     {
-        return await _DbSet.ToListAsync();
+        return await _dbSet.ToListAsync();
     }
 }

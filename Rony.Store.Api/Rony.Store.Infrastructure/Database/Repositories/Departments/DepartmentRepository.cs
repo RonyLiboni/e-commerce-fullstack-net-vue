@@ -10,7 +10,7 @@ public class DepartmentRepository(StoreContext context) : BaseRepository<Departm
 {
     public async Task<IList<Department>> FindAsync(FindDepartmentsParameters parameters)
     {
-        IQueryable<Department> query = _DbSet.AsQueryable();
+        IQueryable<Department> query = _dbSet.AsQueryable();
         
         if (!string.IsNullOrWhiteSpace(parameters.Name))
             query = query.Where(x => EF.Property<string>(x, "Name").Contains(parameters.Name));
@@ -29,7 +29,7 @@ public class DepartmentRepository(StoreContext context) : BaseRepository<Departm
 
     public override async Task<Department> FindByIdAsync(int id)
     {
-       return await _DbSet
+       return await _dbSet
             .Include(department => department.SubDepartments)
                 .ThenInclude(subDepartment => subDepartment.Categories)
             .FirstOrDefaultAsync(department => department.Id == id)
