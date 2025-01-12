@@ -11,7 +11,7 @@ public class UserRepository(StoreContext context) : BaseRepository<User, int>(co
         return await _dbSet.FirstOrDefaultAsync(user => user.Email == email);
     }
 
-    public async Task<List<string>> GetUserRolesAsync(string email)
+    public async Task<List<string>> GetUserRolesAsync(string? email)
     {
         return await _dbSet
             .Where(user => user.Email == email)

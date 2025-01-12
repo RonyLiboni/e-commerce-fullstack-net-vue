@@ -6,5 +6,5 @@ public interface IUserRepository : IBaseRepository<User, int>
 {
     Task<bool> DoesUserHaveNeededRolesAsync(string email, string[] roles);
     Task<User?> FindByEmailAsync(string email);
-    Task<List<string>> GetUserRolesAsync(string email);
+    Task<List<string>> GetUserRolesAsync(string? email);
 }
