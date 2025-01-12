@@ -1,19 +1,19 @@
-import axios, { type AxiosResponse } from "axios";
-import { BaseApi } from "./baseApi";
+import { type AxiosResponse } from "axios";
+import { BaseHttpClient } from "./BaseHttpClient";
 
-export abstract class BaseService <Entity, Id> extends BaseApi {
+export abstract class BaseService <Entity, Id> extends BaseHttpClient {
   protected abstract routeName: string;
 
   public async findById(id: Id): Promise<AxiosResponse<Entity>>{
-    return await axios.get<Entity>(`${this.API_URL}/${this.routeName}/${id}`)
+    return await this.httpClient.get<Entity>(`/${this.routeName}/${id}`)
   }
 
-  public async create(product: Entity): Promise<void>{
-    await axios.post(`${this.API_URL}/${this.routeName}`,product);
+  public async create(entity: Entity): Promise<void>{
+    await this.httpClient.post(`${this.routeName}`,entity);
   }
 
-  public async edit(id: Id, product: Entity): Promise<void>{
-    await axios.put(`${this.API_URL}/${this.routeName}/${id}`, product)
+  public async edit(id: Id, entity: Entity): Promise<void>{
+    await this.httpClient.put(`/${this.routeName}/${id}`, entity)
   }
 
 }

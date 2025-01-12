@@ -1,11 +1,10 @@
 import type { StorageResponse } from "@/types/Storage";
-import axios from "axios";
+import { BaseHttpClient } from "../base/BaseHttpClient";
 
-export class StorageService{
-  protected API_URL = import.meta.env.VITE_APP_WEB_API_URL;
+export class StorageService extends BaseHttpClient{
 
   public async addInTemporaryStorage(formData: FormData): Promise<string>{
-    const response = await axios.post<StorageResponse>(`${this.API_URL}/storage`, formData, {
+    const response = await this.httpClient.post<StorageResponse>(`/storage`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
