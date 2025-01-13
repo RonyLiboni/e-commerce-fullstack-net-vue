@@ -54,7 +54,6 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta.requiresAuth;
   const allowedRoles = to.meta.roles as string[];
   const userRoles = authStore.roles;
-  console.log('passa aqui')
 
   if (requiresAuth && !authStore.isUserLoggedIn) {
     next({ name: 'LoginView' });
