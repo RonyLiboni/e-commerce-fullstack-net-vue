@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/stores/security/authStore";
 import CustomerSearchView from "@/views/CustomerSearchView/CustomerSearchView.vue";
 import LoginView from "@/views/Login/LoginView.vue";
+import NotFoundView from "@/views/NotFound/NotFoundView.vue";
 import ProductForm from "@/views/Product/ProductForm.vue";
 import ProductManagementView from "@/views/Product/ProductManagementView.vue";
 import UnauthorizedView from "@/views/Unauthorized/UnauthorizedView.vue";
@@ -41,7 +42,10 @@ const router = createRouter({
       path: '/unauthorized',
       name: 'UnauthorizedView',
       component: UnauthorizedView
-    }
+    },
+    { path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFoundView }
   ],
 });
 
