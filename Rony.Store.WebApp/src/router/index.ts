@@ -50,12 +50,13 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta.requiresAuth;
   const allowedRoles = to.meta.roles as string[];
   const userRoles = authStore.roles;
+  console.log('passa aqui')
 
   if (requiresAuth && !authStore.isUserLoggedIn) {
     next({ name: 'LoginView' });
-  } else if (requiresAuth && allowedRoles && (userRoles && !allowedRoles.some(role => userRoles!.includes(role)))){
+  } else if (requiresAuth && allowedRoles && (!userRoles || (userRoles && !allowedRoles.some(role => userRoles!.includes(role))))){
     next({ name: 'UnauthorizedView' });
-  } else {
+  }else {
     next();
   }
 });

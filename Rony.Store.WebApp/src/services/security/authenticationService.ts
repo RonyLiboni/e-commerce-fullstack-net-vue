@@ -13,6 +13,10 @@ export class AuthenticationService {
     return this.authStore.isUserLoggedIn;
   }
 
+  public get userRoles(): string[] | undefined {
+    return this.authStore.roles;
+  }
+
   constructor() {
     this.httpClient = axios.create({
       baseURL: import.meta.env.VITE_APP_WEB_API_URL,
@@ -56,6 +60,14 @@ export class AuthenticationService {
     await this.updateAccessTokenIfExpiredOrInvalid();
     await this.updateUserPermissionsIfUndefined();
     return this.authStore.accessToken;
+  }
+
+  public isUserAllowed(allowedRoles: string[]): boolean{
+    return allowedRoles.every(allowedRole => this.authStore.roles?.some(role => role == allowedRole));
+  }
+
+  public doesUserHasAnyOfThisRoles(allowedRoles: string[]): boolean{
+    return allowedRoles.some(allowedRole => this.authStore.roles?.some(role => role == allowedRole));
   }
 
   private async updateUserPermissionsIfUndefined(): Promise<void>{
