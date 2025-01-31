@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { AuthenticationService } from '@/services/security/authenticationService';
 
 const email = ref('ronaldliboni@gmail.com');
@@ -44,19 +44,24 @@ const password = ref('string');
 const isLoading = ref(false);
 const errorMessage = ref('');
 const router = useRouter();
+const route = useRoute();
 const authService = new AuthenticationService();
 const handleLogin = async () => {
   isLoading.value = true;
   errorMessage.value = '';
   try {
     await authService.login(email.value, password.value);
-    router.push('/');
+    const redirect = Array.isArray(route.query.redirect)
+                            ? route.query.redirect[0] ?? '/'
+                            : route.query.redirect || '/';
+    router.push(redirect);
   } catch  {
     errorMessage.value = 'Invalid user or password.';
   } finally {
     isLoading.value = false;
   }
 };
+
 </script>
 
 <style scoped>

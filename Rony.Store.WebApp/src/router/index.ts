@@ -60,7 +60,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (requiresAuth && !authService.isUserLoggedIn) {
-    next({ name: 'LoginView' });
+    next({ name: 'LoginView', query: { redirect: to.fullPath }  });
   } else if (requiresAuth && allowedRoles && (!authService.userRoles || !authService.doesUserHasAnyOfThisRoles(allowedRoles))){
     next({ name: 'UnauthorizedView' });
   }else {
