@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Rony.Store.Domain.Contracts.Services.Infrastructure.Storage;
 using System.ComponentModel.DataAnnotations;
 
-namespace Rony.Store.Api.Controllers.Storage;
+namespace Rony.Store.Api.Controllers.Infrastructure.Storage;
 
 [ApiController]
 [Route("storage")]

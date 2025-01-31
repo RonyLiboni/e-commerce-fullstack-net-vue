@@ -12,7 +12,7 @@ public class ProductRepository(StoreContext context) : BaseRepository<Product, i
 {
     public override async Task<Product> FindByIdAsync(int id)
     {
-        return await _DbSet
+        return await _dbSet
              .Include(product => product.Category)
              .FirstOrDefaultAsync(product => product.Id == id)
               ?? throw new EntityNotFoundException($"{EntityName()} with id '{id}' was not found");
@@ -20,7 +20,7 @@ public class ProductRepository(StoreContext context) : BaseRepository<Product, i
 
     public async Task<List<Product>> FindAsync(FindProductsParameters parameters)
     {
-        IQueryable<Product> query = _DbSet.AsQueryable();
+        IQueryable<Product> query = _dbSet.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(parameters.Name))
             query = query.Where(x => EF.Property<string>(x, "Name").Contains(parameters.Name));
@@ -38,7 +38,7 @@ public class ProductRepository(StoreContext context) : BaseRepository<Product, i
 
     public async Task<List<Product>> FindProductsByCustomerSearchFiltersAsync(FindProductsByCustomerSearchFiltersParameters parameters)
     {
-        var query = _DbSet.AsQueryable();
+        var query = _dbSet.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(parameters.Name))
             query = query.Where(x => x.Name.Contains(parameters.Name));
@@ -76,7 +76,7 @@ public class ProductRepository(StoreContext context) : BaseRepository<Product, i
 
     public async Task<List<Department>> FindFiltersByCustomerSearchFiltersAsync(FindFiltersByCustomerSearchFiltersParameters parameters)
     {
-        var query = _DbSet.AsQueryable();
+        var query = _dbSet.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(parameters.Name))
             query = query.Where(x => x.Name.Contains(parameters.Name));

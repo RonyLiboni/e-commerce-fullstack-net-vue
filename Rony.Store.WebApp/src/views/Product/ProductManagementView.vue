@@ -2,8 +2,8 @@
 
   <div class="table-container">
     <div class="flex">
-      <button class="create-button" @click="createProduct()">Create product</button>
-    <div class="search-container flex-items">
+      <button v-if="authService.isUserAllowed(CREATE_ALLOWED_ROLES)" class="create-button" @click="createProduct()">Create product</button>
+    <div v-if="authService.isUserAllowed(FIND_ALLOWED_ROLES)" class="search-container flex-items">
       <input
         type="text"
         placeholder="Search product by name"
@@ -11,7 +11,7 @@
       />
     </div>
     </div>
-    <table class="product-table">
+    <table v-if="authService.isUserAllowed(FIND_ALLOWED_ROLES)" class="product-table">
       <thead>
         <tr>
           <th>Id</th>
@@ -29,12 +29,12 @@
           <td>{{ product.sku }}</td>
           <td>{{ formatCurrency(product.price) }}</td>
           <td>
-            <button class="edit-button" @click="editProduct(product.id)">Edit</button>
+            <button v-if="authService.isUserAllowed(UPDATE_ALLOWED_ROLES)" class="edit-button" @click="editProduct(product.id) ">Edit</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div>
+    <div v-if="authService.isUserAllowed(FIND_ALLOWED_ROLES)">
       <AppPagination :pageParameters="parameters" :allowedPageSizes="[5,10,20]" :totalItemsCount="products.count"></AppPagination>
     </div>
   </div>
@@ -48,13 +48,17 @@ import { useRouter } from 'vue-router';
 import AppPagination from '@/components/AppPagination.vue';
 import AppSpinner from '@/components/AppSpinner.vue';
 import { ProductService } from '@/services/products/productService';
+import { AuthenticationService } from '@/services/security/authenticationService';
 
+const CREATE_ALLOWED_ROLES = ['Product-Create','Category-FindAll'];
+const FIND_ALLOWED_ROLES = ['Product-Find'];
+const UPDATE_ALLOWED_ROLES = ['Product-UpdateById','Category-FindAll'];
+const authService = new AuthenticationService();
 const productService = new ProductService();
 const isLoadingProducts = ref(false);
 const router = useRouter();
 const error = ref<string | null>(null);
 const pageNumberChanged = ref(false);
-
 const parameters = reactive<ProductManagementFindProductsParameters>({
   pageNumber: 1,
   pageSize: 10
