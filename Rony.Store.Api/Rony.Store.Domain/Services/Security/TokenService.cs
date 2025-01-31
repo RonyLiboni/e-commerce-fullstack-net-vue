@@ -53,7 +53,8 @@ public class TokenService(IOptions<TokenSettings> jwtSettingsOptions, IRefreshTo
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.RefreshTokenSecretKey)),
             ValidateIssuer = false,
-            ValidateAudience = false
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
         };
         return tokenHandler.ValidateToken(token, validationParameters, out _).FindFirst(ClaimTypes.Name)!.Value;
     }

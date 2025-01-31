@@ -130,7 +130,8 @@ public static class DependencyInjection
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            NameClaimType = ClaimTypes.Name
+            NameClaimType = ClaimTypes.Name,
+            ClockSkew = TimeSpan.Zero
         };
     }
 
