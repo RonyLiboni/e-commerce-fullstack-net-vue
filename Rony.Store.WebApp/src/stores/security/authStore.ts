@@ -1,27 +1,25 @@
+import type { AuthState } from '@/types/SecurityTypes';
 import { defineStore } from 'pinia';
-
-export interface AuthState {
-  isUserLoggedIn: boolean,
-  accessToken?: string,
-  roles?: string[]
-}
 
 export const useAuthStore = defineStore('auth',
   {
     state: (): AuthState => ({
-      isUserLoggedIn: true,
+      isUserLoggedIn: false,
       accessToken: undefined,
-      roles: undefined
+      roles: undefined,
+      isFirstLogginAttempt: true
     }),
     actions: {
       logout() {
         this.accessToken = undefined;
         this.isUserLoggedIn = false;
         this.roles = undefined;
+        this.isFirstLogginAttempt = false;
       },
       login(accessToken: string){
         this.accessToken = accessToken;
         this.isUserLoggedIn = true;
+        this.isFirstLogginAttempt = false;
       },
       setRoles(roles?:string[]){
         this.roles = roles;

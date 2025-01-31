@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores/security/authStore";
+import { AuthenticationService } from "@/services/security/authenticationService";
 import CustomerSearchView from "@/views/CustomerSearchView/CustomerSearchView.vue";
 import LoginView from "@/views/Login/LoginView.vue";
 import NotFoundView from "@/views/NotFound/NotFoundView.vue";
@@ -39,7 +39,7 @@ const router = createRouter({
       component: LoginView
     },
     {
-      path: '/unauthorized',
+      path: '/not-authorized',
       name: 'UnauthorizedView',
       component: UnauthorizedView
     },
@@ -49,15 +49,19 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
+
+router.beforeEach(async (to, from, next) => {
+  const authService = new AuthenticationService();
   const requiresAuth = to.meta.requiresAuth;
   const allowedRoles = to.meta.roles as string[];
-  const userRoles = authStore.roles;
 
-  if (requiresAuth && !authStore.isUserLoggedIn) {
+  if(authService.isFirstLogginAttempt || (requiresAuth && authService.isUserLoggedIn) ){
+    await authService.getAccessToken();
+  }
+
+  if (requiresAuth && !authService.isUserLoggedIn) {
     next({ name: 'LoginView' });
-  } else if (requiresAuth && allowedRoles && (!userRoles || (userRoles && !allowedRoles.some(role => userRoles!.includes(role))))){
+  } else if (requiresAuth && allowedRoles && (!authService.userRoles || !authService.doesUserHasAnyOfThisRoles(allowedRoles))){
     next({ name: 'UnauthorizedView' });
   }else {
     next();

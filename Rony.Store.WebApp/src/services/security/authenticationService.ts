@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/stores/security/authStore";
+import type { AccessToken } from "@/types/SecurityTypes";
 import axios, { type AxiosInstance } from "axios";
 import { useRouter } from "vue-router";
 
@@ -17,6 +18,10 @@ export class AuthenticationService {
     return this.authStore.roles;
   }
 
+  public get isFirstLogginAttempt(): boolean {
+    return this.authStore.isFirstLogginAttempt;
+  }
+
   constructor() {
     this.httpClient = axios.create({
       baseURL: import.meta.env.VITE_APP_WEB_API_URL,
@@ -28,7 +33,7 @@ export class AuthenticationService {
   private setupInterceptors(): void {
     this.httpClient.interceptors.request.use(
       async (config) => {
-        config.headers.Authorization = `Bearer ${this.authStore.accessToken}`;
+        config.headers.Authorization = this.authStore.isUserLoggedIn ? `Bearer ${this.authStore.accessToken}`: undefined;
         return config;
       },
       (error) => {
@@ -82,16 +87,15 @@ export class AuthenticationService {
   }
 
   private async updateAccessTokenIfExpiredOrInvalid(): Promise<void> {
-    if (this.isAccessTokenExpired(this.authStore.accessToken) && this.authStore.isUserLoggedIn) {
+    if ((this.authStore.isUserLoggedIn || this.authStore.isFirstLogginAttempt) && this.isAccessTokenExpired(this.authStore.accessToken)) {
       try {
-        const response = await this.httpClient.post('/auth/refresh');
+        const response = await this.httpClient.post<AccessToken>('/auth/refresh');
         this.authStore.login(response.data.accessToken);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Error while trying to update access token:', error.message);
         }
         this.authStore.logout();
-        this.router.push(this.REDIRECT_TO);
       }
     }
   }
@@ -108,8 +112,8 @@ export class AuthenticationService {
       if (!payload.exp) {
         return true;
       }
-
-      return new Date(payload.exp).getTime() > new Date().getTime();
+      const timeInMiliseconds = payload.exp * 1000;
+      return new Date(timeInMiliseconds).getTime() < new Date().getTime();
     } catch (error) {
       console.error('Error while verifying access token expiration: ', error);
     }
