@@ -20,7 +20,7 @@ export abstract class BaseHttpClient{
   private setupInterceptors(): void {
     this.httpClient.interceptors.request.use(
       async (config) => {
-        config.headers.Authorization = `Bearer ${await this.authService.getAccessToken()}`;
+        config.headers.Authorization = this.authService.isUserLoggedIn ? `Bearer ${await this.authService.getAccessToken()}` : undefined;
         return config;
       },
       (error) => {
